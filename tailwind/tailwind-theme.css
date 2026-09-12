@@ -1,0 +1,66 @@
+/**
+ * Add your design tokens as Tailwind theme variables.
+ *
+ * https://tailwindcss.com/docs/theme
+ */
+
+/**
+ * Your theme variables are merged with Tailwind’s defaults, either extending
+ * the default theme with new variables or overriding the values of existing
+ * variables.
+ */
+@theme {
+	/**
+	 * These theme variables use CSS variables set by WordPress using values
+	 * from your `theme.json` file.
+	 *
+	 * If you are using the classic editor, you should use hardcoded color
+	 * values instead of the `var()` functions below.
+     */
+	--color-background: var(--wp--preset--color--background);
+	--color-foreground: var(--wp--preset--color--foreground);
+	--color-primary: var(--wp--preset--color--primary);
+	--color-secondary: var(--wp--preset--color--secondary);
+	--color-tertiary: var(--wp--preset--color--tertiary);
+	--color-rule: var(--wp--preset--color--rule);
+	--color-canvas: var(--wp--preset--color--canvas);
+	--container-content: var(--wp--style--global--content-size);
+	--container-wide: var(--wp--style--global--wide-size);
+
+	/**
+	 * These are the default `font-family` theme variables included with
+     * Tailwind. You can update them below by adding custom fonts at the
+	 * beginning of each value.
+	 *
+	 * Default theme variables can be found in their entirety at the links
+	 * below, on GitHub or in Tailwind’s documentation, respectively:
+	 *
+	 * https://github.com/tailwindlabs/tailwindcss/blob/main/packages/tailwindcss/theme.css
+	 * https://tailwindcss.com/docs/theme#default-theme-variable-reference
+	 */
+	--font-sans:
+		"Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+		"Noto Color Emoji";
+	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	--font-mono:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		"Liberation Mono", "Courier New", monospace;
+
+	/**
+	 * Add your theme below:
+	 */
+
+	/*
+	 * `font-display` is the condensed face used for the wordmark, section
+	 * headings and story headlines, matching the reference design.
+	 */
+	--font-display: var(--wp--preset--font-family--display);
+
+	/*
+	 * The boxed content card. The reference design pins this at 1140px and
+	 * floats it over a full-bleed background, so it is a token rather than an
+	 * arbitrary value repeated across templates.
+	 */
+	--container-site: 71.25rem;
+}
