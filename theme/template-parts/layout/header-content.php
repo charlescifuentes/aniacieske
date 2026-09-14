@@ -37,8 +37,31 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 
 			<div class="text-center md:text-left">
 				<<?php echo esc_attr( $aniacieske_title_tag ); ?> class="font-display text-4xl leading-none font-medium tracking-tight text-primary uppercase sm:text-5xl lg:text-6xl">
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" class="no-underline hover:opacity-80">
-						<?php bloginfo( 'name' ); ?><span class="align-super text-[0.4em]">&reg;</span>
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" class="inline-flex items-start no-underline hover:opacity-80">
+						<?php
+						/*
+						 * The wordmark is the brand's logo file (Customizer → Site
+						 * Identity → Logo), whose three greens spell out the name's
+						 * etymology: ANI · ACIES · KE. Plain text stands in when no
+						 * logo is set.
+						 */
+						if ( has_custom_logo() ) {
+							echo wp_get_attachment_image( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								(int) get_theme_mod( 'custom_logo' ),
+								'full',
+								false,
+								array(
+									'class'         => 'h-10 w-auto sm:h-12 lg:h-14',
+									'alt'           => get_bloginfo( 'name', 'display' ),
+									'loading'       => 'eager',
+									'fetchpriority' => 'high',
+								)
+							);
+						} else {
+							bloginfo( 'name' );
+						}
+						?>
+						<span class="ml-0.5 text-[0.4em] leading-none"><?php echo has_custom_logo() ? '&reg;' : '<span class="align-super">&reg;</span>'; ?></span>
 					</a>
 				</<?php echo esc_attr( $aniacieske_title_tag ); ?>>
 
