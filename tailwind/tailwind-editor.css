@@ -27,3 +27,12 @@
 /**
  * Add your editor styles below:
  */
+
+/*
+ * The front end paints the body with the canvas colour behind the white page
+ * card (see `custom/base.css`). In the editor the body *is* the writing
+ * surface, so restore the plain background here.
+ */
+body {
+	@apply bg-background;
+}

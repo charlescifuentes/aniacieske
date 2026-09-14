@@ -96,6 +96,24 @@ if ( ! function_exists( 'aniacieske_setup' ) ) :
 			)
 		);
 
+		/*
+		 * The page is a white card floating over a full-bleed ground. Exposing
+		 * that ground through the Customizer lets the client swap the flat
+		 * colour for a photograph, as the reference site does, without code.
+		 * The default matches the `canvas` swatch in theme.json.
+		 */
+		add_theme_support(
+			'custom-background',
+			array(
+				'default-color'      => '8a9aa6',
+				'default-attachment' => 'fixed',
+				'default-size'       => 'cover',
+				'default-position-x' => 'center',
+				'default-position-y' => 'center',
+				'default-repeat'     => 'no-repeat',
+			)
+		);
+
 		// The masthead pairs a text wordmark with an uploadable mark.
 		add_theme_support(
 			'custom-logo',

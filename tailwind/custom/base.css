@@ -7,5 +7,28 @@
  * file and is applied both to the front end and in the block editor.
  */
 body {
-	@apply bg-background text-foreground font-sans;
+	@apply text-foreground font-sans;
+}
+
+/*
+ * The front end floats a white `#page` card over a coloured ground.
+ *
+ * `bg-canvas` is only the fallback: the theme also registers
+ * `custom-background`, so WordPress overrides this inline whenever the client
+ * sets a background colour or photo in the Customizer.
+ *
+ * The editor resets this to white in `tailwind-editor.css`. (A `$target`
+ * conditional cannot live here: postcss-advanced-variables only evaluates
+ * `@if` in the entry file, not inside files Tailwind has already imported.)
+ */
+body {
+	@apply bg-canvas;
+}
+
+/*
+ * Anchor defaults. Tailwind Typography handles links inside `.prose`; this
+ * covers links in the chrome (menus, story cards, footer).
+ */
+a {
+	@apply text-primary underline-offset-2;
 }

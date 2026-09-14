@@ -36,7 +36,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 			>
 
 			<div class="text-center md:text-left">
-				<<?php echo esc_attr( $aniacieske_title_tag ); ?> class="font-display text-3xl leading-none font-medium tracking-tight text-primary uppercase sm:text-4xl lg:text-5xl">
+				<<?php echo esc_attr( $aniacieske_title_tag ); ?> class="font-display text-4xl leading-none font-medium tracking-tight text-primary uppercase sm:text-5xl lg:text-6xl">
 					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" class="no-underline hover:opacity-80">
 						<?php bloginfo( 'name' ); ?><span class="align-super text-[0.4em]">&reg;</span>
 					</a>
@@ -66,7 +66,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 		class="bg-secondary"
 		aria-label="<?php esc_attr_e( 'Main Navigation', 'aniacieske-2026' ); ?>"
 	>
-		<div class="flex flex-wrap items-center justify-between gap-4 px-6 py-3 sm:px-10">
+		<div class="flex min-h-[60px] flex-wrap items-center justify-between gap-4 px-6 py-3 sm:px-10">
 
 			<?php aniacieske_social_links(); ?>
 
@@ -87,7 +87,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 						'menu_id'        => 'primary-menu',
 						'depth'          => 2,
 						'container'      => false,
-						'menu_class'     => 'hidden w-full flex-col gap-x-8 gap-y-2 font-display text-sm font-medium uppercase md:flex md:w-auto md:flex-row md:items-center [&_a]:no-underline [&_a:hover]:opacity-70',
+						'menu_class'     => 'hidden w-full flex-col gap-x-8 gap-y-2 font-display text-sm font-medium uppercase md:flex md:w-auto md:flex-row md:items-center [&_a]:text-foreground [&_a]:no-underline [&_a:hover]:text-primary',
 						'items_wrap'     => '<ul id="%1$s" class="%2$s" data-aniacieske-menu>%3$s</ul>',
 					)
 				);
