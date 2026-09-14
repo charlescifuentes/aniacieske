@@ -5,6 +5,9 @@
 # Ignore generated JavaScript files:
 *.min.js
 
+# Ignore minified copies written next to enqueued styles by SiteGround Optimizer:
+*.min.css
+
 # Ignore generated CSS files:
 style.css
 style-editor.css
