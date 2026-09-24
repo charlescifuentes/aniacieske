@@ -342,15 +342,6 @@ function aniacieske_customize_register( $wp_customize ) {
 add_action( 'customize_register', 'aniacieske_customize_register' );
 
 /**
- * Clear the cached accreditation lookup when the media library changes.
- */
-function aniacieske_flush_accreditation_cache() {
-	delete_transient( 'aniacieske_accreditation_ids' );
-}
-add_action( 'add_attachment', 'aniacieske_flush_accreditation_cache' );
-add_action( 'delete_attachment', 'aniacieske_flush_accreditation_cache' );
-
-/**
  * Custom template tags for this theme.
  */
 require get_template_directory() . '/inc/template-tags.php';

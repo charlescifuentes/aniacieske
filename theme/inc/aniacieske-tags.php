@@ -10,28 +10,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! function_exists( 'aniacieske_section_heading' ) ) :
-	/**
-	 * A ruled section heading: condensed uppercase label above a hairline rule.
-	 *
-	 * Used for "Thought of the Month", "Latest", "Categories" and
-	 * "Current & Pending Accreditations".
-	 *
-	 * @param string $title Heading text.
-	 * @param string $tag   Heading element. Defaults to `h2`.
-	 */
-	function aniacieske_section_heading( $title, $tag = 'h2' ) {
-		$allowed = array( 'h1', 'h2', 'h3', 'h4' );
-		$tag     = in_array( $tag, $allowed, true ) ? $tag : 'h2';
-
-		printf(
-			'<%1$s class="mb-4 border-b border-foreground pb-2 font-display text-sm font-semibold tracking-wide text-foreground uppercase">%2$s</%1$s>',
-			esc_attr( $tag ),
-			esc_html( $title )
-		);
-	}
-endif;
-
 if ( ! function_exists( 'aniacieske_social_icon_svg' ) ) :
 	/**
 	 * Inline brand glyphs, used by the navigation bar and the Latest panel.
@@ -114,96 +92,5 @@ if ( ! function_exists( 'aniacieske_social_links' ) ) :
 			'<ul class="flex items-center gap-2">%s</ul>',
 			implode( '', $links ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		);
-	}
-endif;
-
-if ( ! function_exists( 'aniacieske_get_accreditation_ids' ) ) :
-	/**
-	 * Resolve the accreditation logos to attachment IDs.
-	 *
-	 * Looked up by filename rather than hardcoded IDs, because IDs differ
-	 * between local, staging and production. The result is cached so the
-	 * lookup does not run on every request.
-	 *
-	 * @return int[] Attachment IDs, in display order.
-	 */
-	function aniacieske_get_accreditation_ids() {
-		$cached = get_transient( 'aniacieske_accreditation_ids' );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
-		/**
-		 * Filters the uploaded filenames used for the accreditation row.
-		 *
-		 * @param string[] $files Partial filenames matched against `_wp_attached_file`.
-		 */
-		$files = apply_filters(
-			'aniacieske_accreditation_files',
-			array(
-				'ONA-icon',
-				'SPJ-icon',
-				'IFJ-icon',
-				'authors-guild-icon',
-			)
-		);
-
-		global $wpdb;
-		$ids = array();
-
-		foreach ( $files as $file ) {
-			$id = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-				$wpdb->prepare(
-					"SELECT post_id FROM {$wpdb->postmeta}
-					 WHERE meta_key = '_wp_attached_file'
-					   AND meta_value LIKE %s
-					 ORDER BY post_id ASC LIMIT 1",
-					'%' . $wpdb->esc_like( $file ) . '%'
-				)
-			);
-
-			if ( $id ) {
-				$ids[] = (int) $id;
-			}
-		}
-
-		set_transient( 'aniacieske_accreditation_ids', $ids, DAY_IN_SECONDS );
-
-		return $ids;
-	}
-endif;
-
-if ( ! function_exists( 'aniacieske_accreditations' ) ) :
-	/**
-	 * The "Current & Pending Accreditations" logo row in the footer.
-	 */
-	function aniacieske_accreditations() {
-		$ids = aniacieske_get_accreditation_ids();
-
-		if ( empty( $ids ) ) {
-			return;
-		}
-
-		echo '<div class="mt-10">';
-		aniacieske_section_heading( __( 'Current & Pending Accreditations', 'aniacieske-2026' ) );
-		echo '<ul class="flex flex-wrap items-center gap-x-10 gap-y-6">';
-
-		foreach ( $ids as $id ) {
-			printf(
-				'<li class="shrink-0">%s</li>',
-				wp_get_attachment_image( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					$id,
-					'medium',
-					false,
-					array(
-						'class'   => 'h-16 w-auto object-contain',
-						'loading' => 'lazy',
-					)
-				)
-			);
-		}
-
-		echo '</ul></div>';
 	}
 endif;

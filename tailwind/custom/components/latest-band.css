@@ -57,6 +57,29 @@ a.latest-band__channel-link:hover {
 	@apply cursor-default opacity-60;
 }
 
+/* Accreditations --------------------------------------------------------- */
+
+.latest-band__accreditations {
+	@apply mt-8;
+}
+
+.latest-band__accreditation-list {
+	@apply m-0 grid list-none grid-cols-2 items-center gap-x-6 gap-y-5 p-0;
+}
+
+.latest-band__accreditation {
+	@apply m-0 p-0;
+}
+
+/*
+ * The four marks arrive at different aspect ratios and with their own
+ * backgrounds, so cap the height and let each keep its proportions rather than
+ * forcing a shared box.
+ */
+.latest-band__accreditation-image {
+	@apply h-12 w-auto max-w-full object-contain;
+}
+
 .latest-band__channel-icon {
 	@apply inline-flex shrink-0 items-center justify-center;
 }

@@ -12,8 +12,12 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 	InspectorControls,
+	MediaUpload,
+	MediaUploadCheck,
 } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
+import { PanelBody, TextControl, Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 const TEMPLATE = [
 	[ 'core/image', {} ],
@@ -59,7 +63,42 @@ export default function Edit( { attributes, setAttributes } ) {
 		perchUrl,
 		vidsLabel,
 		vidsUrl,
+		accreditationsTitle,
+		accreditationIds,
 	} = attributes;
+
+	/*
+	 * Resolve the chosen attachments so the editor preview shows the real
+	 * logos. `getMediaItems` is keyed on the id list, so it refetches whenever
+	 * the selection changes.
+	 */
+	const accreditations = useSelect(
+		( select ) => {
+			if ( ! accreditationIds?.length ) {
+				return [];
+			}
+
+			const media = select( coreStore ).getEntityRecords(
+				'postType',
+				'attachment',
+				{
+					include: accreditationIds,
+					per_page: accreditationIds.length,
+					_fields: 'id,source_url,alt_text,media_details',
+				}
+			);
+
+			if ( ! media ) {
+				return [];
+			}
+
+			// Preserve the order the client chose rather than the API's.
+			return accreditationIds
+				.map( ( id ) => media.find( ( item ) => item.id === id ) )
+				.filter( Boolean );
+		},
+		[ accreditationIds ]
+	);
 
 	// `not-prose` matches the server wrapper so Tailwind Typography's list and
 	// link styles do not bleed into the preview.
@@ -142,6 +181,61 @@ export default function Edit( { attributes, setAttributes } ) {
 						__next40pxDefaultSize
 					/>
 				</PanelBody>
+
+				<PanelBody title={ __( 'Accreditations', 'aniacieske-2026' ) }>
+					<TextControl
+						label={ __( 'Heading', 'aniacieske-2026' ) }
+						value={ accreditationsTitle }
+						onChange={ ( value ) =>
+							setAttributes( { accreditationsTitle: value } )
+						}
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+					/>
+
+					<MediaUploadCheck>
+						<MediaUpload
+							multiple
+							gallery
+							addToGallery
+							allowedTypes={ [ 'image' ] }
+							value={ accreditationIds }
+							onSelect={ ( media ) =>
+								setAttributes( {
+									accreditationIds: media.map(
+										( item ) => item.id
+									),
+								} )
+							}
+							render={ ( { open } ) => (
+								<Button
+									variant="secondary"
+									onClick={ open }
+									__next40pxDefaultSize
+								>
+									{ accreditationIds?.length
+										? __( 'Edit logos', 'aniacieske-2026' )
+										: __(
+												'Choose logos',
+												'aniacieske-2026'
+										  ) }
+								</Button>
+							) }
+						/>
+					</MediaUploadCheck>
+
+					{ !! accreditationIds?.length && (
+						<Button
+							variant="link"
+							isDestructive
+							onClick={ () =>
+								setAttributes( { accreditationIds: [] } )
+							}
+						>
+							{ __( 'Clear logos', 'aniacieske-2026' ) }
+						</Button>
+					) }
+				</PanelBody>
 			</InspectorControls>
 
 			<div { ...blockProps }>
@@ -191,6 +285,30 @@ export default function Edit( { attributes, setAttributes } ) {
 								</li>
 							) }
 						</ul>
+
+						{ !! accreditations.length && (
+							<div className="latest-band__accreditations">
+								{ accreditationsTitle && (
+									<h2 className="latest-band__heading">
+										{ accreditationsTitle }
+									</h2>
+								) }
+								<ul className="latest-band__accreditation-list">
+									{ accreditations.map( ( logo ) => (
+										<li
+											key={ logo.id }
+											className="latest-band__accreditation"
+										>
+											<img
+												className="latest-band__accreditation-image"
+												src={ logo.source_url }
+												alt={ logo.alt_text || '' }
+											/>
+										</li>
+									) ) }
+								</ul>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
