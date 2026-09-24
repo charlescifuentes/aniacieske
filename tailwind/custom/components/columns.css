@@ -1,0 +1,27 @@
+/**
+ * Images inside a Columns block.
+ *
+ * A row of equal columns should read as a set, but by default each image keeps
+ * its intrinsic size: a source wider than the column scales down to fill it
+ * while a narrower one sits at its own width, leaving the row ragged and the
+ * images different heights.
+ *
+ * Stretching them to the column fixes the widths. The shared aspect ratio then
+ * guarantees equal heights even if the images are later swapped for sources
+ * with different proportions — 21/10 matches the current artwork, so nothing is
+ * cropped today.
+ */
+/*
+ * The figure has to stretch first. `aligncenter` makes an Image block
+ * `display: table`, which shrink-wraps it to the intrinsic width of its
+ * source — so a `width: 100%` on the image alone would only ever fill that
+ * shrink-wrapped box, not the column.
+ */
+.entry-content .wp-block-columns .wp-block-image,
+.entry-content .wp-block-columns .wp-block-image.aligncenter {
+	@apply block w-full;
+}
+
+.entry-content .wp-block-columns .wp-block-image img {
+	@apply aspect-21/10 w-full object-cover;
+}

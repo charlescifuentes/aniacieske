@@ -1,0 +1,35 @@
+/**
+ * Button blocks.
+ *
+ * A Button block is an anchor wearing a background, so Tailwind Typography
+ * styles it as a link — underlining it and recolouring its text. Typography is
+ * imported after this file, so these selectors carry two classes to outrank
+ * its `.prose :where(a)` rule rather than relying on source order.
+ *
+ * Colour itself is not set here: `styles.elements.button` in `theme.json`
+ * supplies the default, which keeps buttons on the palette and lets a block's
+ * own colour settings override it.
+ */
+.prose a.wp-element-button,
+.prose a.wp-block-button__link {
+	@apply no-underline;
+}
+
+/*
+ * `prose-a:text-primary` sets `color` directly and, at equal specificity, wins
+ * over the `elements.button` rule theme.json emits inline in the head. Two
+ * classes here outrank it and hand the colour back.
+ *
+ * The value mirrors `styles.elements.button` in theme.json. Buttons carrying
+ * their own colour are excluded so a block-level choice still applies; a custom
+ * (non-palette) colour arrives inline and wins regardless.
+ */
+.prose a.wp-element-button:not(.has-text-color),
+.prose a.wp-block-button__link:not(.has-text-color) {
+	color: var(--wp--preset--color--background);
+}
+
+.prose a.wp-element-button:hover,
+.prose a.wp-block-button__link:hover {
+	@apply no-underline opacity-90;
+}

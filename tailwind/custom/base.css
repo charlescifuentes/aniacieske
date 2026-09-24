@@ -28,7 +28,13 @@ body {
 /*
  * Anchor defaults. Tailwind Typography handles links inside `.prose`; this
  * covers links in the chrome (menus, story cards, footer).
+ *
+ * Wrapped in `:where()` so the rule carries no specificity: anything that
+ * styles its own links — Button blocks, which are anchors wearing a
+ * background, and block-level colour settings — wins without needing an
+ * override. Buttons are excluded outright so they never inherit the link
+ * colour even where no block colour is set.
  */
-a {
+:where(a:not(.wp-element-button):not([class*='wp-block-button'])) {
 	@apply text-primary underline-offset-2;
 }
