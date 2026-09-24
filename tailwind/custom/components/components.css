@@ -47,8 +47,8 @@
  */
 .page-content > *,
 .entry-content > * {
-	/* Content width from the `theme.json` file */
-	@apply max-w-content mx-auto;
+	/* Content width from the `theme.json` file, with a mobile side gutter */
+	@apply mx-auto w-full max-w-content px-6;
 }
 
 .entry-content > .alignwide {
@@ -57,7 +57,9 @@
 }
 
 .entry-content > .alignfull {
-	@apply max-w-none;
+	/* Full-bleed: edge to edge of the page card, with no gutter. Blocks set to
+	   full width supply their own padding via their own `__inner` element. */
+	@apply max-w-none px-0;
 }
 
 .entry-content > .alignleft {

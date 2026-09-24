@@ -75,17 +75,13 @@ if ( ! function_exists( 'aniacieske_setup' ) ) :
 		 *
 		 * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
 		 */
-		add_theme_support( 'post-thumbnails' );
-
 		/*
-		 * The homepage runs a 60/20/20 story grid inside a 1140px card, so the
-		 * lead image renders about 684px wide and each secondary image about
-		 * 340px. These sizes are doubled for high-density displays and cropped
-		 * hard to 4:3 so the grid keeps its rhythm regardless of what the
-		 * client uploads.
+		 * Story cards crop with CSS (`aspect-[4/3]` + `object-cover`) and draw
+		 * on core image sizes, so no custom crops are registered here. Custom
+		 * sizes would be missing from the ~109 attachments that predate this
+		 * theme and would need a thumbnail regeneration pass to work.
 		 */
-		add_image_size( 'aniacieske-lead', 1368, 1026, true );
-		add_image_size( 'aniacieske-thumb', 680, 510, true );
+		add_theme_support( 'post-thumbnails' );
 
 		// This theme uses wp_nav_menu() in three locations.
 		register_nav_menus(
@@ -249,6 +245,53 @@ function aniacieske_modify_heading_levels( $args, $block_type ) {
 	return $args;
 }
 add_filter( 'register_block_type_args', 'aniacieske_modify_heading_levels', 10, 2 );
+
+/**
+ * Register a block category for the theme's own blocks.
+ *
+ * @param array $categories Existing block categories.
+ * @return array
+ */
+function aniacieske_block_categories( $categories ) {
+	return array_merge(
+		array(
+			array(
+				'slug'  => 'aniacieske',
+				'title' => __( 'Aniacieske', 'aniacieske-2026' ),
+				'icon'  => null,
+			),
+		),
+		$categories
+	);
+}
+add_filter( 'block_categories_all', 'aniacieske_block_categories' );
+
+/**
+ * Register all built theme blocks.
+ *
+ * Each block lives in its own folder under `/blocks`, built from `/src/blocks`
+ * by `@wordpress/scripts`. Any folder containing a `block.json` is registered.
+ */
+function aniacieske_register_blocks() {
+	$aniacieske_blocks_dir = get_template_directory() . '/blocks';
+
+	if ( ! is_dir( $aniacieske_blocks_dir ) ) {
+		return;
+	}
+
+	$aniacieske_block_folders = glob( $aniacieske_blocks_dir . '/*', GLOB_ONLYDIR );
+
+	if ( empty( $aniacieske_block_folders ) ) {
+		return;
+	}
+
+	foreach ( $aniacieske_block_folders as $aniacieske_block_folder ) {
+		if ( file_exists( $aniacieske_block_folder . '/block.json' ) ) {
+			register_block_type( $aniacieske_block_folder );
+		}
+	}
+}
+add_action( 'init', 'aniacieske_register_blocks' );
 
 /**
  * Register Customizer settings for the masthead and navigation bar.

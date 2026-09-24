@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "aniacieske/story-grid",
+	"version": "0.1.0",
+	"title": "Story Grid",
+	"category": "aniacieske",
+	"icon": "grid-view",
+	"description": "The homepage top-stories grid: one lead story beside a grid of recent stories. The lead can be pinned by marking a post sticky.",
+	"keywords": [ "posts", "stories", "grid", "homepage", "top story" ],
+	"textdomain": "aniacieske-2026",
+	"attributes": {
+		"align": { "type": "string", "default": "full" },
+		"showHeading": { "type": "boolean", "default": false },
+		"title": { "type": "string", "default": "Top Stories" },
+		"secondaryCount": { "type": "number", "default": 4 },
+		"featureSticky": { "type": "boolean", "default": true },
+		"categoryId": { "type": "number", "default": 0 }
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"html": false,
+		"spacing": { "margin": true }
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

@@ -1,0 +1,76 @@
+/**
+ * Story Grid — the homepage top-stories band.
+ *
+ * A 60% lead story beside the remaining stories as a two-column grid, per the
+ * approved design. Collapses to a single column on small screens.
+ */
+
+.story-grid {
+	@apply w-full;
+}
+
+.story-grid__inner {
+	@apply w-full px-6 py-8 sm:px-10;
+}
+
+.story-grid__title {
+	@apply mt-0 mb-4 border-b border-foreground pb-2 font-display text-sm font-semibold tracking-wide text-foreground uppercase;
+}
+
+/*
+ * Five columns so the lead can take three and the secondary grid two, which is
+ * the 60/40 split measured from the reference design.
+ */
+.story-grid__layout {
+	@apply grid grid-cols-1 gap-x-5 gap-y-8 md:grid-cols-5;
+}
+
+.story-grid__lead {
+	@apply md:col-span-3;
+}
+
+/*
+ * `content-start` keeps the two rows packed at the top. Without it the grid
+ * stretches to match the taller lead column and the rows drift apart.
+ */
+.story-grid__secondary {
+	@apply m-0 grid list-none grid-cols-2 content-start gap-x-4 gap-y-6 p-0 md:col-span-2;
+}
+
+.story-grid__item {
+	@apply m-0 p-0;
+}
+
+/* Cards ------------------------------------------------------------------- */
+
+.story-card {
+	@apply block no-underline;
+}
+
+.story-card__media {
+	@apply block aspect-4/3 w-full overflow-hidden bg-rule/40;
+}
+
+.story-card__image {
+	@apply h-full w-full object-cover transition-transform duration-300;
+}
+
+.story-card:hover .story-card__image {
+	@apply scale-[1.02];
+}
+
+.story-card__title {
+	@apply mt-2 block font-display leading-snug font-semibold text-foreground transition-colors duration-200;
+}
+
+.story-card:hover .story-card__title {
+	@apply text-primary;
+}
+
+.story-card--lead .story-card__title {
+	@apply text-lg sm:text-xl;
+}
+
+.story-card--secondary .story-card__title {
+	@apply text-sm;
+}
