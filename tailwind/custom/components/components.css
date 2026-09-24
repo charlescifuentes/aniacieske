@@ -46,12 +46,22 @@
  * https://make.wordpress.org/core/2021/06/29/on-layout-and-content-width-in-wordpress-5-8/
  */
 /*
- * The side gutter, declared once so the floated-media rules below can line up
- * with the text rather than repeating the value.
+ * The side gutter sits on the container, not on each child.
+ *
+ * Putting it on the children as `padding-inline` made every block's *box* span
+ * the full card while only its text was inset — invisible for a paragraph, but
+ * a block with a background (a Group, say) then bled its colour to the card
+ * edges while its text sat at a different inset from everything around it.
+ *
+ * With the padding on the container, a child's box is the text column, so
+ * backgrounds line up with the text. Full-width blocks pull back out with a
+ * negative margin.
  */
 .page-content,
 .entry-content {
 	--entry-gutter: --spacing(6);
+
+	padding-inline: var(--entry-gutter);
 }
 
 @media (width >= 40rem) {
@@ -63,9 +73,8 @@
 
 .page-content > *,
 .entry-content > * {
-	/* Content width from the `theme.json` file, with a side gutter */
+	/* Content width from the `theme.json` file */
 	@apply mx-auto w-full max-w-content;
-	padding-inline: var(--entry-gutter);
 }
 
 .entry-content > .alignwide {
@@ -74,10 +83,11 @@
 }
 
 .entry-content > .alignfull {
-	/* Full-bleed: edge to edge of the page card, with no gutter. Blocks set to
-	   full width supply their own padding via their own `__inner` element. */
+	/* Full-bleed: back out through the container's gutter to the card edges.
+	   Blocks set to full width supply their own padding via their `__inner`. */
 	@apply max-w-none;
-	padding-inline: 0;
+	margin-inline: calc(var(--entry-gutter) * -1);
+	width: auto;
 }
 
 /*
@@ -94,14 +104,10 @@
 /*
  * Floated media (alignleft / alignright).
  *
- * `.entry-content` spans the full page card so that `alignfull` blocks can
- * reach its edges. That means a floated child has no narrow parent to sit
- * inside — left to itself it pins to the card edge and, if tall, spills past
- * the content into whatever follows.
- *
- * These rules pull the float back to the text column, cap its width so the
- * text beside it still has room to wrap, and `flow-root` on the container
- * stops it escaping the entry.
+ * The container now carries the gutter, so a float already starts at the text
+ * column and needs no margin of its own to line up. It only needs a width cap
+ * so the text beside it still has room to wrap, and `flow-root` on the
+ * container so a tall float cannot spill past the entry into what follows.
  */
 .entry-content {
 	@apply flow-root;
@@ -111,29 +117,16 @@
 .entry-content > .alignright {
 	width: auto;
 	max-width: min(45%, calc(var(--container-content) / 2));
-	padding-inline: 0;
 }
 
-/*
- * Align the float's outer edge with the text column: half the leftover space
- * either side of the content width, plus the gutter its siblings carry.
- */
 .entry-content > .alignleft {
 	float: left;
-	margin-inline-start: max(
-		var(--entry-gutter),
-		calc((100% - var(--container-content)) / 2 + var(--entry-gutter))
-	);
-	margin-inline-end: 2rem;
+	margin-inline: 0 2rem;
 }
 
 .entry-content > .alignright {
 	float: right;
-	margin-inline-end: max(
-		var(--entry-gutter),
-		calc((100% - var(--container-content)) / 2 + var(--entry-gutter))
-	);
-	margin-inline-start: 2rem;
+	margin-inline: 2rem 0;
 }
 
 /* Below the text column's own width, stop floating and let media span it. */
