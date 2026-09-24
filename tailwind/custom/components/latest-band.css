@@ -1,0 +1,74 @@
+/**
+ * Thought & Latest — the band below the story grid.
+ *
+ * The month's thought and photo on the left, the Perch and Vids channel links
+ * on the right, matching the 60/40 rhythm of the story grid above it.
+ */
+
+.latest-band {
+	@apply w-full;
+}
+
+.latest-band__inner {
+	@apply grid grid-cols-1 gap-x-5 gap-y-8 px-6 pt-4 pb-10 sm:px-10 md:grid-cols-5;
+}
+
+.latest-band__thought {
+	@apply md:col-span-3;
+}
+
+.latest-band__latest {
+	@apply md:col-span-2;
+}
+
+/* The ruled section label, shared by both columns. */
+.latest-band__heading {
+	@apply mt-0 mb-4 border-b border-foreground pb-2 font-display text-sm font-semibold tracking-wide text-foreground uppercase;
+}
+
+.latest-band__thought-content > :first-child {
+	@apply mt-0;
+}
+
+.latest-band__thought-content img {
+	@apply h-auto w-full;
+}
+
+/* Channels --------------------------------------------------------------- */
+
+.latest-band__channels {
+	@apply m-0 flex list-none flex-col gap-4 p-0;
+}
+
+.latest-band__channel {
+	@apply m-0 p-0;
+}
+
+.latest-band__channel-link {
+	@apply flex items-center gap-3 font-display text-sm font-semibold text-foreground no-underline transition-colors duration-200;
+}
+
+a.latest-band__channel-link:hover {
+	@apply text-primary;
+}
+
+/* No URL set yet: the row is informational, so mute it and drop the affordance. */
+.latest-band__channel-link--pending {
+	@apply cursor-default opacity-60;
+}
+
+.latest-band__channel-icon {
+	@apply inline-flex shrink-0 items-center justify-center;
+}
+
+/*
+ * Brand marks keep their own colours; the glyphs themselves use `fill-current`
+ * so the colour is set here rather than baked into the SVG.
+ */
+.latest-band__channel-icon--spotify {
+	color: #1db954;
+}
+
+.latest-band__channel-icon--youtube {
+	color: #ff0000;
+}

@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "aniacieske/latest-band",
+	"version": "0.1.0",
+	"title": "Thought & Latest",
+	"category": "aniacieske",
+	"icon": "format-quote",
+	"description": "The band below the story grid: the month's thought and photo beside links to Ani's Perch and Ani's Vids.",
+	"keywords": [ "thought", "latest", "podcast", "video", "perch" ],
+	"textdomain": "aniacieske-2026",
+	"attributes": {
+		"align": { "type": "string", "default": "full" },
+		"thoughtTitle": { "type": "string", "default": "Thought & Photo of the Month" },
+		"latestTitle": { "type": "string", "default": "Latest" },
+		"perchLabel": { "type": "string", "default": "Ani's Perch" },
+		"perchUrl": { "type": "string", "default": "" },
+		"vidsLabel": { "type": "string", "default": "Ani's Vids" },
+		"vidsUrl": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"html": false
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}
