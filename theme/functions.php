@@ -150,6 +150,17 @@ if ( ! function_exists( 'aniacieske_setup' ) ) :
 		// Add support for responsive embedded content.
 		add_theme_support( 'responsive-embeds' );
 
+		/*
+		 * Declare WooCommerce support so the store renders inside this theme's
+		 * header and footer, and enable the gallery features the single product
+		 * page expects. The store is themed by styling WooCommerce's own class
+		 * names rather than by copying its templates — see `inc/woocommerce.php`.
+		 */
+		add_theme_support( 'woocommerce' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
+
 		// Remove support for block templates.
 		remove_theme_support( 'block-templates' );
 	}
@@ -355,6 +366,11 @@ require get_template_directory() . '/inc/template-tags.php';
  * Template tags specific to the Aniacieske design.
  */
 require get_template_directory() . '/inc/aniacieske-tags.php';
+
+/**
+ * WooCommerce integration.
+ */
+require get_template_directory() . '/inc/woocommerce.php';
 
 /**
  * Functions which enhance the theme by hooking into WordPress.

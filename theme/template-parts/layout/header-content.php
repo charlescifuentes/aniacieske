@@ -32,7 +32,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 				alt=""
 				width="90"
 				height="90"
-				class="h-14 w-auto shrink-0 md:h-20"
+				class="masthead__mark shrink-0"
 			>
 
 			<div class="text-center md:text-left">
@@ -51,7 +51,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 								'full',
 								false,
 								array(
-									'class'         => 'h-10 w-auto sm:h-12 lg:h-14',
+									'class'         => 'masthead__logo',
 									'alt'           => get_bloginfo( 'name', 'display' ),
 									'loading'       => 'eager',
 									'fetchpriority' => 'high',
@@ -78,7 +78,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 			alt="<?php esc_attr_e( 'The Papyrus of Ani', 'aniacieske-2026' ); ?>"
 			width="336"
 			height="224"
-			class="hidden h-28 w-auto shrink-0 md:block lg:h-32"
+			class="masthead__papyrus hidden shrink-0 md:block"
 			loading="eager"
 		>
 
@@ -89,7 +89,7 @@ $aniacieske_title_tag = is_front_page() && is_home() ? 'h1' : 'p';
 		class="bg-secondary"
 		aria-label="<?php esc_attr_e( 'Main Navigation', 'aniacieske-2026' ); ?>"
 	>
-		<div class="flex min-h-[60px] flex-wrap items-center justify-between gap-4 px-6 py-3 sm:px-10">
+		<div class="flex min-h-15 flex-wrap items-center justify-between gap-4 px-6 py-3 sm:px-10">
 
 			<?php aniacieske_social_links(); ?>
 

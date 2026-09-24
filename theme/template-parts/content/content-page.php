@@ -18,7 +18,30 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class( 'page-article' ); ?>>
 
+	<?php
+	/*
+	 * Cart, Checkout and My Account are ordinary Pages, but their content is
+	 * WooCommerce's own UI rather than prose. Tailwind Typography's heading,
+	 * link, table and list rules fight that layout, so those three opt out and
+	 * are styled by `components/woocommerce.css` instead.
+	 */
+	$aniacieske_is_store_page = function_exists( 'is_woocommerce' )
+		&& ( is_cart() || is_checkout() || is_account_page() );
+	?>
+
+	<?php if ( $aniacieske_is_store_page ) : ?>
+	<div class="entry-content wc-store-content not-prose">
+		<?php
+		/*
+		 * Ordinary pages take their heading from a block, but these three are
+		 * WooCommerce shortcodes with no block content to carry one, so the
+		 * title is rendered here instead.
+		 */
+		the_title( '<h1 class="wc-store-content__title">', '</h1>' );
+		?>
+	<?php else : ?>
 	<div <?php aniacieske_content_class( 'entry-content' ); ?>>
+	<?php endif; ?>
 		<?php
 		the_content();
 

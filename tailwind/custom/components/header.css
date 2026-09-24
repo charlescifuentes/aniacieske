@@ -1,0 +1,24 @@
+/**
+ * Masthead imagery.
+ *
+ * These sizes live here rather than as utilities on the tags because
+ * WooCommerce ships `.woocommerce img, .woocommerce-page img { height: auto }`,
+ * which at one class plus one element outranks a single-class Tailwind height
+ * utility. On every shop, cart, checkout and account page the marks therefore
+ * lost their height and rendered at natural size — the hat filled a third of
+ * the masthead.
+ *
+ * Scoping to `#masthead` settles it for good: an id beats anything WooCommerce
+ * or another plugin is likely to bring.
+ */
+#masthead .masthead__mark {
+	@apply h-14 w-auto md:h-20;
+}
+
+#masthead .masthead__logo {
+	@apply h-10 w-auto sm:h-12 lg:h-14;
+}
+
+#masthead .masthead__papyrus {
+	@apply h-28 w-auto lg:h-32;
+}

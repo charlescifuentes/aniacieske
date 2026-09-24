@@ -1,0 +1,391 @@
+/**
+ * WooCommerce — the store, dressed to match the theme.
+ *
+ * WooCommerce's own stylesheets stay (they carry the gallery slider, star
+ * rating font and select2 layout); everything here overrides the visual layer
+ * on top, keyed off WooCommerce's class names. No templates are copied, so the
+ * store survives plugin updates.
+ *
+ * IMPORTANT: with theme support declared, WooCommerce puts both `woocommerce`
+ * and `woocommerce-page` on <body>. Any `.woocommerce <element>` descendant
+ * selector therefore leaks into the masthead and footer — that is exactly how
+ * `.woocommerce img { height: auto }` blew up the masthead logo. Rules here are
+ * keyed to WooCommerce-specific class names, or scoped to `.wc-page` /
+ * `.wc-store-content`, which only ever wrap store content.
+ *
+ * Sections: 1 Containers · 2 Titles · 3 Buttons · 4 Notices ·
+ * 5 Shop archive · 6 Single product · 7 Cart · 8 Checkout · 9 My Account.
+ */
+
+/* ==========================================================================
+   1. Containers
+   ========================================================================== */
+
+/*
+ * The archive and single templates render outside `.entry-content`, so this
+ * container supplies the same gutter the rest of the card uses.
+ */
+.wc-page__inner {
+	@apply mx-auto w-full max-w-content px-6 sm:px-10;
+}
+
+/* Cart / Checkout / Account are Pages, so `.entry-content` already gutters. */
+.wc-store-content {
+	@apply w-full;
+}
+
+.wc-store-content__title {
+	@apply mt-0 mb-6 font-display text-3xl font-semibold text-foreground;
+}
+
+/* ==========================================================================
+   2. Titles
+   ========================================================================== */
+
+.woocommerce-products-header__title,
+.wc-page .woocommerce-loop-product__title,
+.wc-page .product_title,
+.wc-store-content h1,
+.wc-store-content h2,
+.wc-store-content h3 {
+	@apply font-display font-semibold text-foreground;
+}
+
+.woocommerce-products-header__title {
+	@apply mt-0 mb-6 text-3xl;
+}
+
+.wc-page .product_title {
+	@apply mt-0 mb-3 text-3xl;
+}
+
+.wc-store-content h1 {
+	@apply mt-0 mb-6 text-3xl;
+}
+
+.wc-store-content h2 {
+	@apply mt-8 mb-4 text-xl;
+}
+
+.wc-store-content h3 {
+	@apply mt-6 mb-3 text-lg;
+}
+
+/* Prices, wherever they appear in store content. */
+.woocommerce .price,
+.woocommerce .amount {
+	@apply font-display font-semibold text-primary;
+}
+
+.woocommerce .price del {
+	@apply no-underline opacity-60;
+}
+
+.woocommerce .price del .amount {
+	@apply text-foreground line-through;
+}
+
+.woocommerce .price ins {
+	@apply no-underline;
+}
+
+/*
+ * WooCommerce Subscriptions appends the billing period ("/ month") in its own
+ * olive. Mute it so it reads as a suffix to the price rather than competing
+ * with it.
+ */
+.woocommerce .subscription-details {
+	@apply font-sans text-sm font-normal text-foreground/70;
+}
+
+/* ==========================================================================
+   3. Buttons
+   ========================================================================== */
+
+/*
+ * WooCommerce uses `.button`, not the `.wp-element-button` that theme.json
+ * styles, so the palette has to be restated here.
+ */
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce input.button.alt,
+.woocommerce #respond input#submit {
+	@apply rounded-none bg-primary px-6 py-3 font-display text-sm font-semibold text-background uppercase no-underline transition-opacity duration-200;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce button.button.alt:hover,
+.woocommerce input.button.alt:hover,
+.woocommerce #respond input#submit:hover {
+	@apply bg-primary text-background opacity-90;
+}
+
+/*
+ * Disabled buttons get a neutral fill rather than a faded navy one: WooCommerce
+ * ships the cart's "Update cart" disabled until a quantity changes, and pale
+ * navy on white left the label all but unreadable.
+ */
+.woocommerce a.button.disabled,
+.woocommerce button.button:disabled,
+.woocommerce button.button:disabled[disabled] {
+	@apply cursor-not-allowed bg-rule text-foreground/70 opacity-100;
+}
+
+/* ==========================================================================
+   4. Notices
+   ========================================================================== */
+
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+	@apply mb-6 list-none rounded-none border-t-4 bg-rule/30 px-5 py-4 font-sans text-sm text-foreground;
+}
+
+.woocommerce-message {
+	@apply border-t-primary;
+}
+
+.woocommerce-info {
+	@apply border-t-secondary;
+}
+
+.woocommerce-error {
+	@apply border-t-[#b3261e];
+}
+
+.woocommerce-message::before,
+.woocommerce-info::before,
+.woocommerce-error::before {
+	@apply hidden;
+}
+
+/* ==========================================================================
+   5. Shop archive
+   ========================================================================== */
+
+.wc-page ul.products {
+	@apply m-0 grid list-none grid-cols-2 gap-x-6 gap-y-10 p-0 md:grid-cols-4;
+}
+
+/*
+ * WooCommerce clears its float layout with `::before`/`::after` on the list.
+ * In a grid container those pseudo-elements become grid items and each eats a
+ * cell, which pushed the first product into the second column.
+ */
+.wc-page ul.products::before,
+.wc-page ul.products::after,
+.wc-page div.product::before,
+.wc-page div.product::after {
+	@apply hidden;
+}
+
+/* WooCommerce floats its grid items; the grid above replaces that. */
+.wc-page ul.products li.product {
+	@apply m-0 w-auto p-0 text-left;
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+}
+
+.wc-page ul.products li.product a img {
+	@apply mb-3 aspect-square w-full object-cover;
+}
+
+.wc-page ul.products li.product .woocommerce-loop-product__title {
+	@apply mt-0 mb-1 p-0 text-base leading-snug;
+}
+
+.wc-page ul.products li.product a {
+	@apply no-underline;
+}
+
+.wc-page ul.products li.product:hover .woocommerce-loop-product__title {
+	@apply text-primary;
+}
+
+.wc-page ul.products li.product .price {
+	@apply mb-3 block text-sm;
+}
+
+.wc-page ul.products li.product .button {
+	@apply inline-block;
+}
+
+/* Result count and ordering sit on one line above the grid. */
+.woocommerce-result-count,
+.woocommerce-ordering {
+	@apply mb-6 text-sm text-foreground;
+}
+
+.woocommerce-ordering select {
+	@apply border border-rule bg-background px-3 py-2 text-sm;
+}
+
+/* ==========================================================================
+   6. Single product
+   ========================================================================== */
+
+.wc-page div.product {
+	@apply grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2;
+}
+
+.wc-page div.product .woocommerce-product-gallery,
+.wc-page div.product .summary {
+	@apply m-0;
+	float: none !important;
+	width: auto !important;
+}
+
+.wc-page div.product .woocommerce-tabs,
+.wc-page div.product .related,
+.wc-page div.product .up-sells {
+	@apply md:col-span-2;
+}
+
+.wc-page div.product .summary .woocommerce-product-details__short-description {
+	@apply mt-4 text-base leading-relaxed;
+}
+
+.wc-page div.product .quantity input.qty {
+	@apply mr-2 w-20 border border-rule bg-background px-3 py-3 text-center;
+}
+
+.wc-page .woocommerce-tabs ul.tabs {
+	@apply m-0 flex list-none gap-6 border-b border-rule p-0;
+}
+
+.wc-page .woocommerce-tabs ul.tabs::before {
+	@apply hidden;
+}
+
+.wc-page .woocommerce-tabs ul.tabs li {
+	@apply m-0 rounded-none border-0 bg-transparent p-0;
+}
+
+.wc-page .woocommerce-tabs ul.tabs li a {
+	@apply block py-3 font-display text-sm font-semibold text-foreground uppercase no-underline;
+}
+
+.wc-page .woocommerce-tabs ul.tabs li.active a {
+	@apply text-primary;
+}
+
+/* ==========================================================================
+   7. Cart
+   ========================================================================== */
+
+.wc-store-content table.shop_table,
+.wc-page table.shop_table {
+	@apply w-full border-collapse rounded-none border border-rule text-sm;
+}
+
+.wc-store-content table.shop_table th,
+.wc-page table.shop_table th {
+	@apply border-b border-rule px-4 py-3 text-left font-display text-xs font-semibold tracking-wide uppercase;
+}
+
+.wc-store-content table.shop_table td,
+.wc-page table.shop_table td {
+	@apply border-b border-rule px-4 py-4 align-middle;
+}
+
+.wc-store-content table.shop_table img,
+.wc-page table.shop_table img {
+	@apply h-16 w-16 object-cover;
+}
+
+.wc-store-content .cart_totals h2,
+.wc-store-content .cross-sells h2 {
+	@apply font-display text-lg uppercase;
+}
+
+.wc-store-content .coupon input[type='text'] {
+	@apply mr-2 border border-rule bg-background px-3 py-3 text-sm;
+}
+
+/* ==========================================================================
+   8. Checkout
+   ========================================================================== */
+
+/* Every checkout section heading gets the same ruled label. */
+.wc-store-content .woocommerce-billing-fields h3,
+.wc-store-content .woocommerce-shipping-fields h3,
+.wc-store-content .woocommerce-additional-fields h3,
+.wc-store-content .woocommerce-account-fields h3,
+.wc-store-content #order_review_heading {
+	@apply mt-8 mb-4 border-b border-foreground pb-2 font-display text-sm font-semibold tracking-wide uppercase;
+}
+
+.wc-store-content .form-row {
+	@apply mb-4 p-0;
+}
+
+.wc-store-content .form-row label {
+	@apply mb-1 block font-sans text-sm font-semibold text-foreground;
+}
+
+.wc-store-content .input-text,
+.wc-store-content select,
+.wc-store-content textarea {
+	@apply w-full border border-rule bg-background px-3 py-3 text-sm text-foreground;
+}
+
+.wc-store-content .input-text:focus,
+.wc-store-content select:focus,
+.wc-store-content textarea:focus {
+	@apply border-primary ring-1 ring-primary outline-none;
+}
+
+.wc-store-content #payment {
+	@apply rounded-none border border-rule bg-rule/20 p-5;
+}
+
+.wc-store-content #payment ul.payment_methods {
+	@apply m-0 list-none border-0 p-0;
+}
+
+/* ==========================================================================
+   9. My Account
+   ========================================================================== */
+
+.wc-store-content .woocommerce-MyAccount-navigation ul {
+	@apply m-0 list-none border-b border-rule p-0 md:border-0;
+}
+
+.wc-store-content .woocommerce-MyAccount-navigation li {
+	@apply m-0 p-0;
+}
+
+.wc-store-content .woocommerce-MyAccount-navigation li a {
+	@apply block border-b border-rule/60 py-2 font-display text-sm font-semibold text-foreground uppercase no-underline;
+}
+
+.wc-store-content .woocommerce-MyAccount-navigation li.is-active a,
+.wc-store-content .woocommerce-MyAccount-navigation li a:hover {
+	@apply text-primary;
+}
+
+@media (width >= 48rem) {
+	.wc-store-content .woocommerce-MyAccount-navigation {
+		float: left;
+		width: 24%;
+	}
+
+	.wc-store-content .woocommerce-MyAccount-content {
+		float: right;
+		width: 72%;
+	}
+}
+
+/* Login / register forms. */
+.wc-store-content .woocommerce-form-login,
+.wc-store-content .woocommerce-form-register,
+.wc-store-content .woocommerce-ResetPassword {
+	@apply rounded-none border border-rule p-6;
+}
