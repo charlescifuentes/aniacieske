@@ -9,16 +9,25 @@
 	@apply w-full;
 }
 
+/*
+ * Three columns, as the brief lays them out: the thought and photo, the
+ * channels, then the accreditations. Twelve tracks give the thought room for
+ * an image while keeping the two narrow columns from crowding.
+ */
 .latest-band__inner {
-	@apply grid grid-cols-1 gap-x-5 gap-y-8 px-6 pt-4 pb-10 sm:px-10 md:grid-cols-5;
+	@apply grid grid-cols-1 gap-x-6 gap-y-8 px-6 pt-4 pb-10 sm:grid-cols-2 sm:px-10 md:grid-cols-12;
 }
 
 .latest-band__thought {
-	@apply md:col-span-3;
+	@apply sm:col-span-2 md:col-span-5;
 }
 
 .latest-band__latest {
-	@apply md:col-span-2;
+	@apply sm:col-span-1 md:col-span-3;
+}
+
+.latest-band__accreditations {
+	@apply sm:col-span-1 md:col-span-4;
 }
 
 /* The ruled section label, shared by both columns. */
@@ -58,10 +67,6 @@ a.latest-band__channel-link:hover {
 }
 
 /* Accreditations --------------------------------------------------------- */
-
-.latest-band__accreditations {
-	@apply mt-8;
-}
 
 .latest-band__accreditation-list {
 	@apply m-0 grid list-none grid-cols-2 items-center gap-x-6 gap-y-5 p-0;

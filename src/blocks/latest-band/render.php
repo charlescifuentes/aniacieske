@@ -64,9 +64,8 @@ $aniacieske_wrapper = get_block_wrapper_attributes( array( 'class' => 'latest-ba
 			<?php endif; ?>
 		</div>
 
-		<?php if ( ! empty( $aniacieske_channels ) || ! empty( $aniacieske_accred_ids ) ) : ?>
+		<?php if ( ! empty( $aniacieske_channels ) ) : ?>
 			<div class="latest-band__latest">
-				<?php if ( ! empty( $aniacieske_channels ) ) : ?>
 				<?php if ( '' !== $aniacieske_latest_title ) : ?>
 					<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_latest_title ); ?></h2>
 				<?php endif; ?>
@@ -97,34 +96,33 @@ $aniacieske_wrapper = get_block_wrapper_attributes( array( 'class' => 'latest-ba
 						</li>
 					<?php endforeach; ?>
 				</ul>
+			</div>
+		<?php endif; ?>
+
+		<?php if ( ! empty( $aniacieske_accred_ids ) ) : ?>
+			<div class="latest-band__accreditations">
+				<?php if ( '' !== $aniacieske_accred_title ) : ?>
+					<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_accred_title ); ?></h2>
 				<?php endif; ?>
 
-				<?php if ( ! empty( $aniacieske_accred_ids ) ) : ?>
-					<div class="latest-band__accreditations">
-						<?php if ( '' !== $aniacieske_accred_title ) : ?>
-							<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_accred_title ); ?></h2>
-						<?php endif; ?>
-
-						<ul class="latest-band__accreditation-list">
-							<?php foreach ( $aniacieske_accred_ids as $aniacieske_accred_id ) : ?>
-								<li class="latest-band__accreditation">
-									<?php
-									echo wp_get_attachment_image( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-										$aniacieske_accred_id,
-										'medium',
-										false,
-										array(
-											'class'   => 'latest-band__accreditation-image',
-											'loading' => 'lazy',
-											'alt'     => get_post_meta( $aniacieske_accred_id, '_wp_attachment_image_alt', true ),
-										)
-									);
-									?>
-								</li>
-							<?php endforeach; ?>
-						</ul>
-					</div>
-				<?php endif; ?>
+				<ul class="latest-band__accreditation-list">
+					<?php foreach ( $aniacieske_accred_ids as $aniacieske_accred_id ) : ?>
+						<li class="latest-band__accreditation">
+							<?php
+							echo wp_get_attachment_image( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								$aniacieske_accred_id,
+								'medium',
+								false,
+								array(
+									'class'   => 'latest-band__accreditation-image',
+									'loading' => 'lazy',
+									'alt'     => get_post_meta( $aniacieske_accred_id, '_wp_attachment_image_alt', true ),
+								)
+							);
+							?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
 			</div>
 		<?php endif; ?>
 

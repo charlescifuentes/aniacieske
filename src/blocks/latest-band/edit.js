@@ -285,31 +285,31 @@ export default function Edit( { attributes, setAttributes } ) {
 								</li>
 							) }
 						</ul>
-
-						{ !! accreditations.length && (
-							<div className="latest-band__accreditations">
-								{ accreditationsTitle && (
-									<h2 className="latest-band__heading">
-										{ accreditationsTitle }
-									</h2>
-								) }
-								<ul className="latest-band__accreditation-list">
-									{ accreditations.map( ( logo ) => (
-										<li
-											key={ logo.id }
-											className="latest-band__accreditation"
-										>
-											<img
-												className="latest-band__accreditation-image"
-												src={ logo.source_url }
-												alt={ logo.alt_text || '' }
-											/>
-										</li>
-									) ) }
-								</ul>
-							</div>
-						) }
 					</div>
+
+					{ !! accreditations.length && (
+						<div className="latest-band__accreditations">
+							{ accreditationsTitle && (
+								<h2 className="latest-band__heading">
+									{ accreditationsTitle }
+								</h2>
+							) }
+							<ul className="latest-band__accreditation-list">
+								{ accreditations.map( ( logo ) => (
+									<li
+										key={ logo.id }
+										className="latest-band__accreditation"
+									>
+										<img
+											className="latest-band__accreditation-image"
+											src={ logo.source_url }
+											alt={ logo.alt_text || '' }
+										/>
+									</li>
+								) ) }
+							</ul>
+						</div>
+					) }
 				</div>
 			</div>
 		</>
