@@ -13,9 +13,15 @@
 
 	</div><!-- #content -->
 
-	<?php get_template_part( 'template-parts/layout/footer', 'content' ); ?>
-
 </div><!-- #page -->
+
+<?php
+/*
+ * The footer sits outside `#page` so it reads as its own card below the
+ * content, with the background showing through the gap between them.
+ */
+get_template_part( 'template-parts/layout/footer', 'content' );
+?>
 
 <?php wp_footer(); ?>
 

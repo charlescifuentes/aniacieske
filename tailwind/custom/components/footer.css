@@ -1,0 +1,35 @@
+/**
+ * Site footer — its own card below the page card.
+ *
+ * The legal links sit in a row across the top with the rights line centred
+ * beneath, matching the approved design.
+ */
+
+.site-footer {
+	/* `mt-4` leaves the background visible between this card and the page. */
+	@apply mx-auto mt-4 w-full max-w-site bg-background shadow-lg;
+}
+
+.site-footer__inner {
+	@apply px-6 py-5 sm:px-10;
+}
+
+.site-footer__menu {
+	@apply m-0 flex list-none flex-col items-center justify-center gap-x-12 gap-y-2 p-0 sm:flex-row;
+}
+
+.site-footer__menu li {
+	@apply m-0 p-0;
+}
+
+.site-footer__menu a {
+	@apply font-display text-sm font-semibold text-primary no-underline transition-opacity duration-200;
+}
+
+.site-footer__menu a:hover {
+	@apply underline opacity-80;
+}
+
+.site-footer__rights {
+	@apply mt-3 mb-0 text-center text-xs text-foreground;
+}
