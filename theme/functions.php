@@ -230,6 +230,11 @@ add_filter( 'tiny_mce_before_init', 'aniacieske_tinymce_add_class' );
 /**
  * Limit the block editor to heading levels supported by Tailwind Typography.
  *
+ * `_tw` ships this without `<h1>`, on the assumption that the theme renders the
+ * post title as the page's only `<h1>`. This theme builds pages entirely from
+ * blocks and renders no title of its own, so `<h1>` has to be available here or
+ * interior pages would have no top-level heading at all.
+ *
  * @param array  $args Array of arguments for registering a block type.
  * @param string $block_type Block type name including namespace.
  * @return array
@@ -239,8 +244,8 @@ function aniacieske_modify_heading_levels( $args, $block_type ) {
 		return $args;
 	}
 
-	// Remove <h1>, <h5> and <h6>.
-	$args['attributes']['levelOptions']['default'] = array( 2, 3, 4 );
+	// Offer <h1> through <h4>; drop <h5> and <h6>.
+	$args['attributes']['levelOptions']['default'] = array( 1, 2, 3, 4 );
 
 	return $args;
 }

@@ -45,10 +45,27 @@
  *
  * https://make.wordpress.org/core/2021/06/29/on-layout-and-content-width-in-wordpress-5-8/
  */
+/*
+ * The side gutter, declared once so the floated-media rules below can line up
+ * with the text rather than repeating the value.
+ */
+.page-content,
+.entry-content {
+	--entry-gutter: --spacing(6);
+}
+
+@media (width >= 40rem) {
+	.page-content,
+	.entry-content {
+		--entry-gutter: --spacing(10);
+	}
+}
+
 .page-content > *,
 .entry-content > * {
-	/* Content width from the `theme.json` file, with a mobile side gutter */
-	@apply mx-auto w-full max-w-content px-6;
+	/* Content width from the `theme.json` file, with a side gutter */
+	@apply mx-auto w-full max-w-content;
+	padding-inline: var(--entry-gutter);
 }
 
 .entry-content > .alignwide {
@@ -59,13 +76,72 @@
 .entry-content > .alignfull {
 	/* Full-bleed: edge to edge of the page card, with no gutter. Blocks set to
 	   full width supply their own padding via their own `__inner` element. */
-	@apply max-w-none px-0;
+	@apply max-w-none;
+	padding-inline: 0;
 }
 
+/*
+ * Vertical rhythm between the navigation bar and the footer.
+ *
+ * Lives on `#content` rather than on the entry so every template gets it, and
+ * because it is vertical only it does not interfere with `alignfull` blocks
+ * reaching the left and right edges of the page card.
+ */
+#content {
+	@apply py-8 sm:py-12;
+}
+
+/*
+ * Floated media (alignleft / alignright).
+ *
+ * `.entry-content` spans the full page card so that `alignfull` blocks can
+ * reach its edges. That means a floated child has no narrow parent to sit
+ * inside — left to itself it pins to the card edge and, if tall, spills past
+ * the content into whatever follows.
+ *
+ * These rules pull the float back to the text column, cap its width so the
+ * text beside it still has room to wrap, and `flow-root` on the container
+ * stops it escaping the entry.
+ */
+.entry-content {
+	@apply flow-root;
+}
+
+.entry-content > .alignleft,
+.entry-content > .alignright {
+	width: auto;
+	max-width: min(45%, calc(var(--container-content) / 2));
+	padding-inline: 0;
+}
+
+/*
+ * Align the float's outer edge with the text column: half the leftover space
+ * either side of the content width, plus the gutter its siblings carry.
+ */
 .entry-content > .alignleft {
-	@apply float-left mr-8;
+	float: left;
+	margin-inline-start: max(
+		var(--entry-gutter),
+		calc((100% - var(--container-content)) / 2 + var(--entry-gutter))
+	);
+	margin-inline-end: 2rem;
 }
 
 .entry-content > .alignright {
-	@apply float-right ml-8;
+	float: right;
+	margin-inline-end: max(
+		var(--entry-gutter),
+		calc((100% - var(--container-content)) / 2 + var(--entry-gutter))
+	);
+	margin-inline-start: 2rem;
+}
+
+/* Below the text column's own width, stop floating and let media span it. */
+@media (width < 40rem) {
+	.entry-content > .alignleft,
+	.entry-content > .alignright {
+		float: none;
+		max-width: 100%;
+		margin-inline: auto;
+	}
 }

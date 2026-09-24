@@ -14,8 +14,9 @@
  * channels, then the accreditations. Twelve tracks give the thought room for
  * an image while keeping the two narrow columns from crowding.
  */
+/* `pt-4` is the gap from the block above; `#content` owns the outer rhythm. */
 .latest-band__inner {
-	@apply grid grid-cols-1 gap-x-6 gap-y-8 px-6 pt-4 pb-10 sm:grid-cols-2 sm:px-10 md:grid-cols-12;
+	@apply grid grid-cols-1 gap-x-6 gap-y-8 px-6 pt-4 pb-0 sm:grid-cols-2 sm:px-10 md:grid-cols-12;
 }
 
 .latest-band__thought {
