@@ -11,8 +11,14 @@
  * Scoping to `#masthead` settles it for good: an id beats anything WooCommerce
  * or another plugin is likely to bring.
  */
+/*
+ * The hat sits close to the papyrus in height so the masthead reads as three
+ * balanced elements rather than a small mark beside two large ones. It is
+ * roughly square where the papyrus is landscape, so it stops a little short of
+ * matching outright.
+ */
 #masthead .masthead__mark {
-	@apply h-14 w-auto md:h-20;
+	@apply h-16 w-auto sm:h-20 md:h-24 lg:h-28;
 }
 
 #masthead .masthead__logo {
