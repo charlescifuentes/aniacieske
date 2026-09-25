@@ -1,0 +1,153 @@
+/**
+ * Single post — header, meta, featured image and footer.
+ *
+ * These sit outside `.entry-content`, so their gutter comes from the rule in
+ * `components.css`; what follows is the spacing and type.
+ */
+
+.entry-header {
+	@apply mb-6;
+}
+
+.entry-title {
+	@apply mb-3;
+}
+
+/*
+ * The meta line renders as a run of sibling spans with no separators of their
+ * own — author, dates, categories and the edit link would otherwise print as
+ * "AniSeptember 30, 2021August 25, 2023Feature StoryEdit". A flex row with a
+ * gap spaces them without needing markup changes.
+ */
+.entry-meta {
+	@apply mb-0 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-foreground/70;
+}
+
+.entry-meta a {
+	@apply text-foreground/70 no-underline;
+}
+
+.entry-meta a:hover {
+	@apply text-primary underline;
+}
+
+/*
+ * `aniacieske_posted_on()` prints both the published and modified dates for
+ * hAtom. Showing two unlabelled dates side by side just reads as a mistake, so
+ * the modified one stays in the markup for parsers but is hidden visually.
+ */
+.entry-meta time.updated:not(.published) {
+	@apply sr-only;
+}
+
+/*
+ * The featured image. `aniacieske_post_thumbnail()` emits a bare <figure> as a
+ * direct child of the article — pages render no such element, so this only
+ * ever matches the post thumbnail.
+ */
+article > figure {
+	@apply mb-8;
+
+	padding-inline: var(--entry-gutter);
+}
+
+article > figure img {
+	@apply h-auto w-full;
+}
+
+/*
+ * Footer: divided off from the body rather than running straight on. It prints
+ * the same run of unseparated spans as the meta line, so it gets the same flex
+ * treatment.
+ */
+.entry-footer {
+	@apply mt-10 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule pt-6 text-sm text-foreground/70;
+}
+
+.entry-footer a {
+	@apply text-foreground/70 no-underline;
+}
+
+.entry-footer a:hover {
+	@apply text-primary underline;
+}
+
+.entry-footer time.updated:not(.published) {
+	@apply sr-only;
+}
+
+/* Post navigation ---------------------------------------------------------- */
+
+.post-navigation {
+	@apply mt-10 border-t border-rule pt-6;
+}
+
+.post-navigation .nav-links {
+	@apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+}
+
+.post-navigation .nav-next {
+	@apply sm:text-right;
+}
+
+.post-navigation .nav-links a {
+	@apply font-display font-semibold text-foreground no-underline;
+}
+
+.post-navigation .nav-links a:hover {
+	@apply text-primary;
+}
+
+/* The "Previous Post" / "Next Post" kicker above each title. */
+.post-navigation .nav-links a span[aria-hidden='true'] {
+	@apply mb-1 block font-sans text-xs font-normal tracking-wide text-foreground/60 uppercase;
+}
+
+/* Comments ----------------------------------------------------------------- */
+
+#comments {
+	@apply mt-10 border-t border-rule pt-6;
+}
+
+#comments .comment-reply-title,
+#comments .comments-title {
+	@apply mt-0 mb-4 font-display text-lg font-semibold text-foreground;
+}
+
+#comments .comment-form label {
+	@apply mb-1 block text-sm font-semibold text-foreground;
+}
+
+/*
+ * Preflight zeroes border widths on form controls, so these need restating or
+ * the comment fields render as invisible boxes.
+ */
+#comments .comment-form input[type='text'],
+#comments .comment-form input[type='email'],
+#comments .comment-form input[type='url'],
+#comments .comment-form textarea {
+	@apply w-full border border-rule bg-background px-3 py-2 text-sm text-foreground;
+}
+
+#comments .comment-form input[type='text']:focus,
+#comments .comment-form input[type='email']:focus,
+#comments .comment-form input[type='url']:focus,
+#comments .comment-form textarea:focus {
+	@apply border-primary ring-1 ring-primary outline-none;
+}
+
+#comments .comment-form p {
+	@apply mb-4;
+}
+
+#comments .comment-form .form-submit input[type='submit'] {
+	@apply cursor-pointer border-0 bg-primary px-6 py-3 font-display text-sm font-semibold text-background uppercase transition-opacity duration-200;
+}
+
+#comments .comment-form .form-submit input[type='submit']:hover {
+	@apply opacity-90;
+}
+
+#comments .comment-list {
+	@apply m-0 list-none p-0;
+}

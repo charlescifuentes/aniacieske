@@ -57,18 +57,35 @@
  * backgrounds line up with the text. Full-width blocks pull back out with a
  * negative margin.
  */
+/*
+ * The gutter is declared on `#content` so everything inside an entry can read
+ * it — a single post puts `.entry-header`, the featured image and
+ * `.entry-footer` outside `.entry-content`, and those need the same inset or
+ * the title sits flush to the card while the body text is indented. It is
+ * repeated on the entry itself as a fallback for the block editor, where
+ * `#content` does not exist.
+ */
+#content,
 .page-content,
 .entry-content {
 	--entry-gutter: --spacing(6);
-
-	padding-inline: var(--entry-gutter);
 }
 
 @media (width >= 40rem) {
+	#content,
 	.page-content,
 	.entry-content {
 		--entry-gutter: --spacing(10);
 	}
+}
+
+.page-content,
+.entry-content,
+.entry-header,
+.entry-footer,
+.post-navigation,
+#comments {
+	padding-inline: var(--entry-gutter);
 }
 
 .page-content > *,
