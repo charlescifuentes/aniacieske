@@ -1,0 +1,136 @@
+/**
+ * Search results and post archives.
+ *
+ * `content-excerpt.php` emits the same header / figure / content / footer
+ * structure as a single post, so without this each result would inherit the
+ * single-post treatment — a full-width featured image per excerpt.
+ *
+ * Results are laid out as a media card instead: thumbnail beside the title,
+ * excerpt and meta, separated by a hairline rule.
+ */
+
+.page-header {
+	@apply mb-8;
+}
+
+.page-title {
+	@apply mb-0;
+}
+
+/* Result cards ------------------------------------------------------------- */
+
+.search #main > article,
+.archive #main > article,
+.blog #main > article {
+	@apply mb-8 grid grid-cols-1 gap-x-6 gap-y-3 border-b border-rule pb-8;
+
+	padding-inline: var(--entry-gutter);
+}
+
+/*
+ * The gutter moves to the card itself so the grid columns line up; the parts
+ * inside would otherwise each carry their own inset from `components.css`.
+ */
+.search #main > article > *,
+.archive #main > article > *,
+.blog #main > article > * {
+	padding-inline: 0;
+}
+
+.search #main > article:last-of-type,
+.archive #main > article:last-of-type,
+.blog #main > article:last-of-type {
+	@apply mb-0 border-b-0 pb-0;
+}
+
+@media (width >= 40rem) {
+	.search #main > article,
+	.archive #main > article,
+	.blog #main > article {
+		grid-template-columns: 220px 1fr;
+		grid-template-areas:
+			'media header'
+			'media content'
+			'media footer';
+	}
+
+	.search #main > article > figure,
+	.archive #main > article > figure,
+	.blog #main > article > figure {
+		grid-area: media;
+	}
+
+	.search #main > article > .entry-header,
+	.archive #main > article > .entry-header,
+	.blog #main > article > .entry-header {
+		grid-area: header;
+	}
+
+	.search #main > article > .entry-content,
+	.archive #main > article > .entry-content,
+	.blog #main > article > .entry-content {
+		grid-area: content;
+	}
+
+	.search #main > article > .entry-footer,
+	.archive #main > article > .entry-footer,
+	.blog #main > article > .entry-footer {
+		grid-area: footer;
+	}
+}
+
+/* A result with no featured image lets the text take the full width. */
+.search #main > article:not(:has(> figure)),
+.archive #main > article:not(:has(> figure)),
+.blog #main > article:not(:has(> figure)) {
+	grid-template-columns: 1fr;
+	grid-template-areas:
+		'header'
+		'content'
+		'footer';
+}
+
+.search #main > article > figure,
+.archive #main > article > figure,
+.blog #main > article > figure {
+	@apply m-0;
+}
+
+.search #main > article > figure img,
+.archive #main > article > figure img,
+.blog #main > article > figure img {
+	@apply aspect-4/3 w-full object-cover;
+}
+
+/* Card typography ---------------------------------------------------------- */
+
+.search #main > article .entry-header,
+.archive #main > article .entry-header,
+.blog #main > article .entry-header {
+	@apply mb-0;
+}
+
+.search #main > article .entry-title,
+.archive #main > article .entry-title,
+.blog #main > article .entry-title {
+	@apply mb-0 font-display text-xl leading-snug font-semibold;
+}
+
+.search #main > article .entry-title a,
+.archive #main > article .entry-title a,
+.blog #main > article .entry-title a {
+	@apply text-foreground no-underline;
+}
+
+.search #main > article .entry-title a:hover,
+.archive #main > article .entry-title a:hover,
+.blog #main > article .entry-title a:hover {
+	@apply text-primary;
+}
+
+/* The footer is meta here, not a divider, so drop the rule and top margin. */
+.search #main > article .entry-footer,
+.archive #main > article .entry-footer,
+.blog #main > article .entry-footer {
+	@apply mt-0 border-t-0 pt-0;
+}

@@ -41,17 +41,19 @@
 }
 
 /*
- * The featured image. `aniacieske_post_thumbnail()` emits a bare <figure> as a
- * direct child of the article — pages render no such element, so this only
- * ever matches the post thumbnail.
+ * The featured image, full width of the text column.
+ *
+ * Scoped to `.single`: the same `aniacieske_post_thumbnail()` markup appears in
+ * search and archive results, where a full-bleed image would swamp a list of
+ * excerpts. Those get a compact thumbnail in `archive.css` instead.
  */
-article > figure {
+.single article > figure {
 	@apply mb-8;
 
 	padding-inline: var(--entry-gutter);
 }
 
-article > figure img {
+.single article > figure img {
 	@apply h-auto w-full;
 }
 
