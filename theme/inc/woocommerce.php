@@ -75,6 +75,36 @@ add_filter( 'loop_shop_columns', 'aniacieske_wc_loop_columns' );
 add_filter( 'woocommerce_product_subcategories_hide_empty', '__return_false' );
 
 /**
+ * Keep the default "Uncategorized" bucket out of the shop.
+ *
+ * WooCommerce requires a default product category and will not let it be
+ * deleted, so it cannot simply be removed in the admin. It is a fallback for
+ * uncategorised products rather than a real part of the catalogue, and with
+ * empty categories now shown it would otherwise appear as a blank tile
+ * alongside the client's actual offerings.
+ *
+ * Read from `default_product_cat` rather than matched by name, so it keeps
+ * working if the term is renamed or a different one is made the default.
+ *
+ * @param array $args Term query arguments for the shop's category loop.
+ * @return array
+ */
+function aniacieske_wc_exclude_default_category( $args ) {
+	$aniacieske_default = (int) get_option( 'default_product_cat' );
+
+	if ( ! $aniacieske_default ) {
+		return $args;
+	}
+
+	$aniacieske_exclude = isset( $args['exclude'] ) ? (array) $args['exclude'] : array();
+
+	$args['exclude'] = array_unique( array_merge( $aniacieske_exclude, array( $aniacieske_default ) ) );
+
+	return $args;
+}
+add_filter( 'woocommerce_product_subcategories_args', 'aniacieske_wc_exclude_default_category' );
+
+/**
  * Use a theme-supplied placeholder for products and categories with no image.
  *
  * WooCommerce's own placeholder is generated into the uploads folder on
