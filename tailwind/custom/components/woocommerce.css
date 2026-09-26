@@ -217,6 +217,39 @@
 	@apply inline-block;
 }
 
+/* Category tiles ----------------------------------------------------------
+ *
+ * A category tile carries both `product-category` and `product`, so it already
+ * picks up the grid cell and square image above. These cover the parts unique
+ * to it: the title element has its own class, and the product count arrives in
+ * a <mark>, which browsers render with a yellow highlight.
+ */
+
+.wc-page ul.products li.product-category .woocommerce-loop-category__title {
+	@apply mt-0 mb-1 p-0 font-display text-base leading-snug font-semibold text-foreground;
+}
+
+.wc-page ul.products li.product-category:hover .woocommerce-loop-category__title {
+	@apply text-primary;
+}
+
+.wc-page ul.products li.product-category mark.count {
+	@apply bg-transparent font-sans text-sm font-normal text-foreground/60;
+}
+
+/*
+ * WooCommerce prints the category image and title as siblings inside one <a>
+ * with no wrapper around the image, so the frame tint goes on the image itself
+ * rather than the link — otherwise it would box the title in too.
+ */
+.wc-page ul.products li.product-category a {
+	@apply block;
+}
+
+.wc-page ul.products li.product-category a img {
+	@apply bg-rule/30;
+}
+
 /* Result count and ordering sit on one line above the grid. */
 .woocommerce-result-count,
 .woocommerce-ordering {
