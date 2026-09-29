@@ -23,7 +23,10 @@
 	<?php aniacieske_post_thumbnail(); ?>
 
 	<div <?php aniacieske_content_class( 'entry-content' ); ?>>
-		<?php the_excerpt(); ?>
+		<?php
+		the_excerpt();
+		aniacieske_continue_reading_button();
+		?>
 	</div><!-- .entry-content -->
 
 	<footer class="entry-footer">

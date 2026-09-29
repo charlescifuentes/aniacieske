@@ -103,11 +103,38 @@ function aniacieske_continue_reading_link( $more_string ) {
 	return $more_string;
 }
 
-// Filter the excerpt more link.
-add_filter( 'excerpt_more', 'aniacieske_continue_reading_link' );
+/**
+ * Trim the excerpt with a plain ellipsis.
+ *
+ * WordPress appends whatever `excerpt_more` returns inside the excerpt's own
+ * paragraph, so a link here lands hard against the final word. The archive
+ * templates render "Continue reading" as a button after the excerpt instead —
+ * see `aniacieske_continue_reading_button()`.
+ *
+ * @return string
+ */
+function aniacieske_excerpt_more() {
+	return '&hellip;';
+}
+add_filter( 'excerpt_more', 'aniacieske_excerpt_more' );
 
-// Filter the content more link.
+// The `<!--more-->` link inside full content keeps the inline treatment.
 add_filter( 'the_content_more_link', 'aniacieske_continue_reading_link' );
+
+/**
+ * Print the "Continue reading" button used beneath an excerpt.
+ */
+function aniacieske_continue_reading_button() {
+	printf(
+		'<p class="entry-more"><a class="entry-more__link" href="%1$s">%2$s</a></p>',
+		esc_url( get_permalink() ),
+		sprintf(
+			/* translators: %s: Name of current post, for screen readers only. */
+			wp_kses( __( 'Continue reading %s', 'aniacieske-2026' ), array( 'span' => array( 'class' => array() ) ) ),
+			the_title( '<span class="sr-only">"', '"</span>', false )
+		)
+	);
+}
 
 /**
  * Outputs a comment in the HTML5 format.

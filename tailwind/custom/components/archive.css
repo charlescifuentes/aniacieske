@@ -134,3 +134,27 @@
 .blog #main > article .entry-footer {
 	@apply mt-0 border-t-0 pt-0;
 }
+
+/* Continue reading ---------------------------------------------------------
+ *
+ * Rendered after the excerpt rather than appended inside it, so it reads as a
+ * button on its own line instead of running straight on from the last word.
+ */
+
+.entry-more {
+	@apply mt-4 mb-0;
+}
+
+/*
+ * Two classes, not one: this link sits inside `.entry-content`, where Tailwind
+ * Typography's `prose-a:text-primary` sets a colour directly. At equal
+ * specificity that rule wins on source order — typography is imported after
+ * the components — and the label rendered navy on navy, invisible.
+ */
+.entry-more .entry-more__link {
+	@apply inline-block bg-primary px-5 py-2 font-display text-xs font-semibold tracking-wide text-background uppercase no-underline transition-opacity duration-200;
+}
+
+.entry-more .entry-more__link:hover {
+	@apply text-background no-underline opacity-90;
+}
