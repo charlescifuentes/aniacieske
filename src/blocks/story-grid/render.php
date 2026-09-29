@@ -16,7 +16,20 @@ $aniacieske_show_heading = ! empty( $attributes['showHeading'] );
 $aniacieske_title        = isset( $attributes['title'] ) ? $attributes['title'] : '';
 $aniacieske_count        = isset( $attributes['secondaryCount'] ) ? absint( $attributes['secondaryCount'] ) : 4;
 $aniacieske_sticky_lead  = ! isset( $attributes['featureSticky'] ) || $attributes['featureSticky'];
-$aniacieske_category     = isset( $attributes['categoryId'] ) ? absint( $attributes['categoryId'] ) : 0;
+/*
+ * Categories to draw from; an empty list means every category.
+ *
+ * `categoryId` is the single-select attribute this replaced. Reading it as a
+ * fallback keeps any block saved before the change working until it is next
+ * edited.
+ */
+$aniacieske_categories = isset( $attributes['categoryIds'] ) && is_array( $attributes['categoryIds'] )
+	? array_values( array_filter( array_map( 'absint', $attributes['categoryIds'] ) ) )
+	: array();
+
+if ( empty( $aniacieske_categories ) && ! empty( $attributes['categoryId'] ) ) {
+	$aniacieske_categories = array( absint( $attributes['categoryId'] ) );
+}
 
 /*
  * Shared query constraints. `ignore_sticky_posts` is on throughout because the
@@ -31,8 +44,8 @@ $aniacieske_base_args = array(
 	'no_found_rows'       => true,
 );
 
-if ( $aniacieske_category ) {
-	$aniacieske_base_args['cat'] = $aniacieske_category;
+if ( ! empty( $aniacieske_categories ) ) {
+	$aniacieske_base_args['category__in'] = $aniacieske_categories;
 }
 
 // Pick the lead story: the newest sticky post, else simply the newest post.

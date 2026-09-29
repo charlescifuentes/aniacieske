@@ -12,14 +12,16 @@ import {
 	TextControl,
 	RangeControl,
 	ToggleControl,
-	SelectControl,
+	CheckboxControl,
+	Button,
+	Spinner,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { showHeading, title, secondaryCount, featureSticky, categoryId } =
+	const { showHeading, title, secondaryCount, featureSticky, categoryIds } =
 		attributes;
 	const blockProps = useBlockProps();
 
@@ -34,13 +36,15 @@ export default function Edit( { attributes, setAttributes } ) {
 		[]
 	);
 
-	const categoryOptions = [
-		{ label: __( 'All categories', 'aniacieske-2026' ), value: 0 },
-		...( categories || [] ).map( ( category ) => ( {
-			label: category.name,
-			value: category.id,
-		} ) ),
-	];
+	const selected = categoryIds ?? [];
+
+	const toggleCategory = ( id ) => {
+		setAttributes( {
+			categoryIds: selected.includes( id )
+				? selected.filter( ( current ) => current !== id )
+				: [ ...selected, id ],
+		} );
+	};
 
 	return (
 		<>
@@ -95,16 +99,43 @@ export default function Edit( { attributes, setAttributes } ) {
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 					/>
-					<SelectControl
-						label={ __( 'Category', 'aniacieske-2026' ) }
-						value={ categoryId }
-						options={ categoryOptions }
-						onChange={ ( value ) =>
-							setAttributes( { categoryId: Number( value ) } )
-						}
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-					/>
+				</PanelBody>
+
+				<PanelBody title={ __( 'Categories', 'aniacieske-2026' ) }>
+					<p className="components-base-control__help">
+						{ selected.length
+							? __(
+									'Only stories in the checked categories appear.',
+									'aniacieske-2026'
+							  )
+							: __(
+									'Nothing checked, so stories are drawn from every category.',
+									'aniacieske-2026'
+							  ) }
+					</p>
+
+					{ ! categories && <Spinner /> }
+
+					{ categories?.map( ( category ) => (
+						<CheckboxControl
+							key={ category.id }
+							label={ category.name }
+							checked={ selected.includes( category.id ) }
+							onChange={ () => toggleCategory( category.id ) }
+							__nextHasNoMarginBottom
+						/>
+					) ) }
+
+					{ !! selected.length && (
+						<Button
+							variant="link"
+							onClick={ () =>
+								setAttributes( { categoryIds: [] } )
+							}
+						>
+							{ __( 'Clear selection', 'aniacieske-2026' ) }
+						</Button>
+					) }
 				</PanelBody>
 			</InspectorControls>
 

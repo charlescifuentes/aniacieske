@@ -15,7 +15,11 @@
 		"title": { "type": "string", "default": "Top Stories" },
 		"secondaryCount": { "type": "number", "default": 4 },
 		"featureSticky": { "type": "boolean", "default": true },
-		"categoryId": { "type": "number", "default": 0 }
+		"categoryIds": {
+			"type": "array",
+			"default": [],
+			"items": { "type": "number" }
+		}
 	},
 	"supports": {
 		"align": [ "wide", "full" ],
