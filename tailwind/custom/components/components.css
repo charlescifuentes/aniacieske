@@ -109,6 +109,25 @@
 }
 
 /*
+ * Video and embeds.
+ *
+ * At the full reading width a video dominates the post the way the featured
+ * image did, so the default is capped to match it at 600px and centred.
+ *
+ * Only the *default* width is capped: the block toolbar's Wide and Full
+ * alignments still widen it, which gives per-post control through a
+ * WordPress control that already exists rather than a theme setting.
+ *
+ * `:not()` on the alignment classes keeps this from fighting the rules above,
+ * which would otherwise tie on specificity and be decided by source order.
+ */
+.entry-content > .wp-block-video:not(.alignwide):not(.alignfull),
+.entry-content > .wp-block-embed:not(.alignwide):not(.alignfull),
+.entry-content > figure.wp-block-embed:not(.alignwide):not(.alignfull) {
+	@apply mx-auto max-w-150;
+}
+
+/*
  * Vertical rhythm between the navigation bar and the footer.
  *
  * Lives on `#content` rather than on the entry so every template gets it, and
