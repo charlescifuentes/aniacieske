@@ -41,11 +41,15 @@
 }
 
 /*
- * The featured image, full width of the text column.
+ * The featured image.
+ *
+ * Capped at 600px and centred rather than filling the 1060px text column — at
+ * full width it dominated the top of the post and pushed the opening paragraph
+ * well below the fold.
  *
  * Scoped to `.single`: the same `aniacieske_post_thumbnail()` markup appears in
- * search and archive results, where a full-bleed image would swamp a list of
- * excerpts. Those get a compact thumbnail in `archive.css` instead.
+ * search and archive results, where this sizing would be wrong. Those get a
+ * compact thumbnail in `archive.css` instead.
  */
 .single article > figure {
 	@apply mb-8;
@@ -54,7 +58,7 @@
 }
 
 .single article > figure img {
-	@apply h-auto w-full;
+	@apply mx-auto h-auto w-full max-w-150;
 }
 
 /*
