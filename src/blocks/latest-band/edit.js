@@ -15,7 +15,13 @@ import {
 	MediaUpload,
 	MediaUploadCheck,
 } from '@wordpress/block-editor';
-import { PanelBody, TextControl, Button } from '@wordpress/components';
+import {
+	PanelBody,
+	TextControl,
+	Button,
+	CheckboxControl,
+	Spinner,
+} from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -63,9 +69,48 @@ export default function Edit( { attributes, setAttributes } ) {
 		perchUrl,
 		vidsLabel,
 		vidsUrl,
+		categoriesTitle,
+		categoryIds,
 		accreditationsTitle,
 		accreditationIds,
 	} = attributes;
+
+	const allCategories = useSelect(
+		( select ) =>
+			select( coreStore ).getEntityRecords( 'taxonomy', 'category', {
+				per_page: -1,
+				_fields: 'id,name,count',
+				orderby: 'name',
+				order: 'asc',
+			} ),
+		[]
+	);
+
+	const selectedCategories = categoryIds ?? [];
+
+	/*
+	 * Checking appends, so the front end lists categories in the order the
+	 * client checked them. Unchecking and re-checking moves one to the end.
+	 */
+	const toggleCategory = ( id ) => {
+		setAttributes( {
+			categoryIds: selectedCategories.includes( id )
+				? selectedCategories.filter( ( current ) => current !== id )
+				: [ ...selectedCategories, id ],
+		} );
+	};
+
+	// Mirrors `render.php`: the checked list in order, else every category
+	// with a post, alphabetically.
+	const shownCategories = ! allCategories
+		? []
+		: selectedCategories.length
+		? selectedCategories
+				.map( ( id ) =>
+					allCategories.find( ( category ) => category.id === id )
+				)
+				.filter( Boolean )
+		: allCategories.filter( ( category ) => category.count > 0 );
 
 	/*
 	 * Resolve the chosen attachments so the editor preview shows the real
@@ -182,6 +227,55 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 
+				<PanelBody title={ __( 'Categories', 'aniacieske-2026' ) }>
+					<TextControl
+						label={ __( 'Heading', 'aniacieske-2026' ) }
+						value={ categoriesTitle }
+						onChange={ ( value ) =>
+							setAttributes( { categoriesTitle: value } )
+						}
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+					/>
+
+					<p className="components-base-control__help">
+						{ selectedCategories.length
+							? __(
+									'Only the checked categories are listed, in the order you checked them.',
+									'aniacieske-2026'
+							  )
+							: __(
+									'Nothing checked, so every category with a post is listed alphabetically.',
+									'aniacieske-2026'
+							  ) }
+					</p>
+
+					{ ! allCategories && <Spinner /> }
+
+					{ allCategories?.map( ( category ) => (
+						<CheckboxControl
+							key={ category.id }
+							label={ category.name }
+							checked={ selectedCategories.includes(
+								category.id
+							) }
+							onChange={ () => toggleCategory( category.id ) }
+							__nextHasNoMarginBottom
+						/>
+					) ) }
+
+					{ !! selectedCategories.length && (
+						<Button
+							variant="link"
+							onClick={ () =>
+								setAttributes( { categoryIds: [] } )
+							}
+						>
+							{ __( 'Clear selection', 'aniacieske-2026' ) }
+						</Button>
+					) }
+				</PanelBody>
+
 				<PanelBody title={ __( 'Accreditations', 'aniacieske-2026' ) }>
 					<TextControl
 						label={ __( 'Heading', 'aniacieske-2026' ) }
@@ -286,6 +380,28 @@ export default function Edit( { attributes, setAttributes } ) {
 							) }
 						</ul>
 					</div>
+
+					{ !! shownCategories.length && (
+						<nav className="latest-band__categories">
+							{ categoriesTitle && (
+								<h2 className="latest-band__heading">
+									{ categoriesTitle }
+								</h2>
+							) }
+							<ul className="latest-band__category-list">
+								{ shownCategories.map( ( category ) => (
+									<li
+										key={ category.id }
+										className="latest-band__category"
+									>
+										<span className="latest-band__category-link">
+											{ category.name }
+										</span>
+									</li>
+								) ) }
+							</ul>
+						</nav>
+					) }
 
 					{ !! accreditations.length && (
 						<div className="latest-band__accreditations">

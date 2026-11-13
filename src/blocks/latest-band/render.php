@@ -2,8 +2,9 @@
 /**
  * Server render for the `aniacieske/latest-band` block.
  *
- * The month's thought and photo beside links to Ani's Perch (Spotify) and
- * Ani's Vids (YouTube).
+ * The month's thought and photo, links to Ani's Perch (Spotify) and Ani's
+ * Vids (YouTube), and the category list, with the accreditation logos in a
+ * full-width row beneath — the layout of the Futbol Papa homepage band.
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    InnerBlocks HTML for the thought column.
@@ -15,6 +16,37 @@
 $aniacieske_thought_title = isset( $attributes['thoughtTitle'] ) ? $attributes['thoughtTitle'] : '';
 $aniacieske_latest_title  = isset( $attributes['latestTitle'] ) ? $attributes['latestTitle'] : '';
 $aniacieske_accred_title  = isset( $attributes['accreditationsTitle'] ) ? $attributes['accreditationsTitle'] : '';
+$aniacieske_cat_title     = isset( $attributes['categoriesTitle'] ) ? $attributes['categoriesTitle'] : '';
+
+/*
+ * Categories the client checked, in the order they checked them. With none
+ * checked the column lists every category that has a post, alphabetically,
+ * so it is never empty and never links to an empty archive by accident. A
+ * category the client checks deliberately is shown even when empty, so a
+ * "coming soon" section can be listed ahead of its first post.
+ */
+$aniacieske_cat_ids = isset( $attributes['categoryIds'] ) && is_array( $attributes['categoryIds'] )
+	? array_values( array_filter( array_map( 'absint', $attributes['categoryIds'] ) ) )
+	: array();
+
+$aniacieske_categories = get_terms(
+	empty( $aniacieske_cat_ids )
+		? array(
+			'taxonomy'   => 'category',
+			'hide_empty' => true,
+			'orderby'    => 'name',
+		)
+		: array(
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+			'include'    => $aniacieske_cat_ids,
+			'orderby'    => 'include',
+		)
+);
+
+if ( is_wp_error( $aniacieske_categories ) ) {
+	$aniacieske_categories = array();
+}
 
 // Chosen by the client from the media library, so the row is theirs to curate
 // and travels with the content between environments.
@@ -97,6 +129,24 @@ $aniacieske_wrapper = get_block_wrapper_attributes( array( 'class' => 'latest-ba
 					<?php endforeach; ?>
 				</ul>
 			</div>
+		<?php endif; ?>
+
+		<?php if ( ! empty( $aniacieske_categories ) ) : ?>
+			<nav class="latest-band__categories" aria-label="<?php echo esc_attr( '' !== $aniacieske_cat_title ? $aniacieske_cat_title : __( 'Categories', 'aniacieske-2026' ) ); ?>">
+				<?php if ( '' !== $aniacieske_cat_title ) : ?>
+					<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_cat_title ); ?></h2>
+				<?php endif; ?>
+
+				<ul class="latest-band__category-list">
+					<?php foreach ( $aniacieske_categories as $aniacieske_category ) : ?>
+						<li class="latest-band__category">
+							<a class="latest-band__category-link" href="<?php echo esc_url( get_term_link( $aniacieske_category ) ); ?>">
+								<?php echo esc_html( $aniacieske_category->name ); ?>
+							</a>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</nav>
 		<?php endif; ?>
 
 		<?php if ( ! empty( $aniacieske_accred_ids ) ) : ?>

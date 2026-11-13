@@ -10,9 +10,10 @@
 }
 
 /*
- * Three columns, as the brief lays them out: the thought and photo, the
- * channels, then the accreditations. Twelve tracks give the thought room for
- * an image while keeping the two narrow columns from crowding.
+ * Three columns, following the Futbol Papa band: the thought and photo, the
+ * channels, then the categories, with the accreditations as a full-width row
+ * beneath. Twelve tracks give the thought room for an image and the
+ * categories room for their two-column list.
  */
 /* `pt-4` is the gap from the block above; `#content` owns the outer rhythm. */
 .latest-band__inner {
@@ -27,8 +28,12 @@
 	@apply sm:col-span-1 md:col-span-3;
 }
 
-.latest-band__accreditations {
+.latest-band__categories {
 	@apply sm:col-span-1 md:col-span-4;
+}
+
+.latest-band__accreditations {
+	@apply col-span-full;
 }
 
 /* The ruled section label, shared by both columns. */
@@ -67,21 +72,36 @@ a.latest-band__channel-link:hover {
 	@apply cursor-default opacity-60;
 }
 
+/* Categories ------------------------------------------------------------- */
+
+/* Two columns of links, as on Futbol Papa, filling down then across. */
+.latest-band__category-list {
+	@apply m-0 list-none columns-2 gap-x-4 p-0;
+}
+
+.latest-band__category {
+	@apply m-0 break-inside-avoid p-0 pb-3;
+}
+
+.latest-band__category-link {
+	@apply text-sm leading-snug text-foreground underline underline-offset-2 transition-colors duration-200 hover:text-primary;
+}
+
 /* Accreditations --------------------------------------------------------- */
 
+/* One row across the full band, wrapping on narrow screens. */
 .latest-band__accreditation-list {
-	@apply m-0 grid list-none grid-cols-2 items-center gap-x-4 gap-y-6 p-0;
+	@apply m-0 grid list-none grid-cols-2 items-center gap-x-8 gap-y-6 p-0 sm:flex sm:flex-wrap;
 }
 
 /*
- * The four marks arrive at wildly different aspect ratios — ONA is a wide
- * lockup, IFJ nearly square. Giving each cell a fixed height and letting the
- * image fill it with `object-contain` sizes them by optical area rather than
- * by height alone, so a wide mark is not left looking twice the size of a
- * square one.
+ * The marks arrive at wildly different aspect ratios — ONA is a wide lockup,
+ * IFJ nearly square. Giving each cell a fixed box and letting the image fill
+ * it with `object-contain` sizes them by optical area rather than by height
+ * alone, so a wide mark is not left looking twice the size of a square one.
  */
 .latest-band__accreditation {
-	@apply m-0 flex h-20 items-center justify-center p-0;
+	@apply m-0 flex h-20 items-center justify-center p-0 sm:w-40;
 }
 
 .latest-band__accreditation-image {

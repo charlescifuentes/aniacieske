@@ -6,8 +6,8 @@
 	"title": "Thought & Latest",
 	"category": "aniacieske",
 	"icon": "format-quote",
-	"description": "The band below the story grid: the month's thought and photo beside Ani's Perch, Ani's Vids and the accreditation logos.",
-	"keywords": [ "thought", "latest", "podcast", "video", "perch", "accreditations" ],
+	"description": "The band below the story grid: the month's thought and photo, Ani's Perch and Ani's Vids, and the categories, with the accreditation logos in a row beneath.",
+	"keywords": [ "thought", "latest", "podcast", "video", "perch", "categories", "accreditations" ],
 	"textdomain": "aniacieske-2026",
 	"attributes": {
 		"align": { "type": "string", "default": "full" },
@@ -17,6 +17,12 @@
 		"perchUrl": { "type": "string", "default": "" },
 		"vidsLabel": { "type": "string", "default": "Ani's Vids" },
 		"vidsUrl": { "type": "string", "default": "" },
+		"categoriesTitle": { "type": "string", "default": "Categories" },
+		"categoryIds": {
+			"type": "array",
+			"default": [],
+			"items": { "type": "number" }
+		},
 		"accreditationsTitle": {
 			"type": "string",
 			"default": "Current & Pending Accreditations"
