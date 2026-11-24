@@ -209,8 +209,26 @@
 	@apply text-primary;
 }
 
+/*
+ * Product name and price share a line under the photo. The title is inline so
+ * a long name wraps normally with the price following its last word.
+ */
+.wc-page ul.products li.product .woocommerce-loop-product__title,
 .wc-page ul.products li.product .price {
-	@apply mb-3 block text-sm;
+	@apply inline align-baseline;
+}
+
+.wc-page ul.products li.product .woocommerce-loop-product__title {
+	@apply mr-1;
+}
+
+.wc-page ul.products li.product .price {
+	@apply text-base leading-snug;
+}
+
+/* The inline pair cannot carry the gap above the button, so the link does. */
+.wc-page ul.products li.product .woocommerce-loop-product__link {
+	@apply mb-3 block;
 }
 
 .wc-page ul.products li.product .button {

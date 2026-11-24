@@ -57,3 +57,32 @@ function aniacieske_register_category_paid_field() {
 	);
 }
 add_action( 'rest_api_init', 'aniacieske_register_category_paid_field' );
+
+/**
+ * Heading of PMPro's message box on restricted content.
+ *
+ * PMPro builds it as "{level name} Membership Required" with no setting for
+ * the wording, and renaming the level would also change checkout and receipts.
+ *
+ * @return string
+ */
+function aniacieske_no_access_message_header() {
+	return esc_html__( 'Subscription Required (provides access to the year’s current content)', 'aniacieske-2026' );
+}
+add_filter( 'pmpro_no_access_message_header', 'aniacieske_no_access_message_header' );
+
+/**
+ * First line of the same message box, which PMPro words around the level name.
+ *
+ * Only that paragraph is swapped, so PMPro's Join Now button and its checkout
+ * link stay its own.
+ *
+ * @param string $body Message body HTML.
+ * @return string
+ */
+function aniacieske_no_access_message_body( $body ) {
+	$line = '<p>' . esc_html__( 'You must be a subscriber to access this content.', 'aniacieske-2026' ) . '</p>';
+
+	return preg_replace( '~<p>.*?</p>~s', $line, $body, 1 );
+}
+add_filter( 'pmpro_no_access_message_body', 'aniacieske_no_access_message_body' );
