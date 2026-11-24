@@ -21,7 +21,7 @@
 }
 
 .latest-band__thought {
-	@apply sm:col-span-2 md:col-span-5;
+	@apply @container sm:col-span-2 md:col-span-5;
 }
 
 .latest-band__latest {
@@ -49,6 +49,31 @@
 	@apply h-auto w-full;
 }
 
+/*
+ * Photo beside the text. A container query, not a breakpoint: the column is
+ * narrower on a tablet than on a large phone, where the pair must stack.
+ */
+.latest-band__thought-fields {
+	@apply grid grid-cols-1 items-start gap-4;
+}
+
+.latest-band__thought-fields--has-image {
+	@apply @sm:grid-cols-2;
+}
+
+.latest-band__thought-image {
+	@apply h-auto w-full;
+}
+
+/* `pre-line` keeps the line breaks typed into the textarea. */
+.latest-band__thought-text {
+	@apply m-0 whitespace-pre-line;
+}
+
+.latest-band__thought-link {
+	@apply mt-3 inline-block text-sm leading-snug text-foreground underline underline-offset-2 transition-colors duration-200 hover:text-primary;
+}
+
 /* Channels --------------------------------------------------------------- */
 
 .latest-band__channels {
@@ -74,9 +99,22 @@ a.latest-band__channel-link:hover {
 
 /* Categories ------------------------------------------------------------- */
 
-/* Two columns of links, as on Futbol Papa, filling down then across. */
+/* Unsplit: two columns of links, as on Futbol Papa, filling down then across. */
 .latest-band__category-list {
 	@apply m-0 list-none columns-2 gap-x-4 p-0;
+}
+
+/* Split: the free and paid groups take a column each. */
+.latest-band__category-groups--split {
+	@apply grid grid-cols-2 gap-x-4;
+}
+
+.latest-band__category-groups--split .latest-band__category-list {
+	@apply columns-1;
+}
+
+.latest-band__category-label {
+	@apply mt-0 mb-3 font-display text-sm font-semibold text-foreground;
 }
 
 .latest-band__category {

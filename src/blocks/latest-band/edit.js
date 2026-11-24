@@ -1,16 +1,19 @@
 /**
  * Editor interface for the Thought & Latest band.
  *
- * The thought column is edited inline with inner blocks; the headings and the
- * two channel links are set from the sidebar. The band styling is shared with
- * the front end through the theme's Tailwind build, so this preview matches
- * the server-rendered output.
+ * Everything is set from the sidebar, including the month's thought. The band
+ * styling is shared with the front end through the theme's Tailwind build, so
+ * this preview matches the server-rendered output.
  */
 
 import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
+import { useDebounce } from '@wordpress/compose';
+import { decodeEntities } from '@wordpress/html-entities';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
+	store as blockEditorStore,
 	InspectorControls,
 	MediaUpload,
 	MediaUploadCheck,
@@ -20,18 +23,12 @@ import {
 	TextControl,
 	Button,
 	CheckboxControl,
+	ComboboxControl,
 	Spinner,
+	TextareaControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
-
-const TEMPLATE = [
-	[ 'core/image', {} ],
-	[
-		'core/paragraph',
-		{ placeholder: __( 'This month’s thought…', 'aniacieske-2026' ) },
-	],
-];
 
 /*
  * The same brand glyphs `render.php` prints, so the editor preview matches the
@@ -61,25 +58,123 @@ function ChannelIcon( { network } ) {
 	);
 }
 
-export default function Edit( { attributes, setAttributes } ) {
+/*
+ * A thought stored as inner blocks that `deprecated.js` could not move into
+ * the fields. Still shown and editable until the fields replace it.
+ */
+function LegacyThought() {
+	const innerBlocksProps = useInnerBlocksProps(
+		{ className: 'latest-band__thought-content' },
+		{ renderAppender: false }
+	);
+
+	return <div { ...innerBlocksProps } />;
+}
+
+/*
+ * Searches published posts by title, newest first. The chosen post is fetched
+ * on its own so its title shows even when it is not among the results.
+ */
+function PostPicker( { postId, onChange } ) {
+	const [ search, setSearch ] = useState( '' );
+	const debouncedSetSearch = useDebounce( setSearch, 300 );
+
+	const { posts, selectedPost } = useSelect(
+		( select ) => {
+			const { getEntityRecords, getEntityRecord } = select( coreStore );
+			const query = {
+				per_page: 20,
+				status: 'publish',
+				_fields: 'id,title',
+			};
+
+			if ( search ) {
+				query.search = search;
+				query.search_columns = [ 'post_title' ];
+			}
+
+			return {
+				posts: getEntityRecords( 'postType', 'post', query ),
+				selectedPost: postId
+					? getEntityRecord( 'postType', 'post', postId )
+					: null,
+			};
+		},
+		[ search, postId ]
+	);
+
+	const results = posts ?? [];
+	const options = (
+		selectedPost && ! results.some( ( { id } ) => id === selectedPost.id )
+			? [ selectedPost, ...results ]
+			: results
+	).map( ( { id, title } ) => ( {
+		value: String( id ),
+		label:
+			decodeEntities( title?.rendered ) ||
+			__( '(no title)', 'aniacieske-2026' ),
+	} ) );
+
+	return (
+		<ComboboxControl
+			label={ __( 'Link to post', 'aniacieske-2026' ) }
+			help={ __(
+				'Adds a “Continue reading” link. Search by post title.',
+				'aniacieske-2026'
+			) }
+			value={ postId ? String( postId ) : null }
+			options={ options }
+			onFilterValueChange={ debouncedSetSearch }
+			onChange={ ( value ) => onChange( value ? Number( value ) : 0 ) }
+			__nextHasNoMarginBottom
+			__next40pxDefaultSize
+		/>
+	);
+}
+
+export default function Edit( { attributes, setAttributes, clientId } ) {
 	const {
 		thoughtTitle,
+		thoughtImageId,
+		thoughtText,
+		thoughtPostId,
 		latestTitle,
 		perchLabel,
 		perchUrl,
 		vidsLabel,
 		vidsUrl,
 		categoriesTitle,
+		freeLabel,
+		paidLabel,
 		categoryIds,
 		accreditationsTitle,
 		accreditationIds,
 	} = attributes;
 
+	const thoughtImage = useSelect(
+		( select ) =>
+			thoughtImageId
+				? select( coreStore ).getEntityRecord(
+						'postType',
+						'attachment',
+						thoughtImageId
+				  )
+				: null,
+		[ thoughtImageId ]
+	);
+
+	const hasLegacyThought = useSelect(
+		( select ) => select( blockEditorStore ).getBlockCount( clientId ) > 0,
+		[ clientId ]
+	);
+
+	const hasThought = !! ( thoughtImageId || thoughtText || thoughtPostId );
+
 	const allCategories = useSelect(
 		( select ) =>
 			select( coreStore ).getEntityRecords( 'taxonomy', 'category', {
 				per_page: -1,
-				_fields: 'id,name,count',
+				_fields: 'id,name,count,aniacieske_is_paid',
 				orderby: 'name',
 				order: 'asc',
 			} ),
@@ -111,6 +206,24 @@ export default function Edit( { attributes, setAttributes } ) {
 				)
 				.filter( Boolean )
 		: allCategories.filter( ( category ) => category.count > 0 );
+
+	const paidCategories = shownCategories.filter(
+		( category ) => category.aniacieske_is_paid
+	);
+	const freeCategories = shownCategories.filter(
+		( category ) => ! category.aniacieske_is_paid
+	);
+
+	// With nothing paid there is nothing to differentiate: one unlabelled list.
+	const isSplit = paidCategories.length > 0;
+	const categoryGroups = [
+		{
+			key: 'free',
+			label: isSplit ? freeLabel : '',
+			items: freeCategories,
+		},
+		{ key: 'paid', label: paidLabel, items: paidCategories },
+	].filter( ( group ) => group.items.length );
 
 	/*
 	 * Resolve the chosen attachments so the editor preview shows the real
@@ -148,14 +261,86 @@ export default function Edit( { attributes, setAttributes } ) {
 	// `not-prose` matches the server wrapper so Tailwind Typography's list and
 	// link styles do not bleed into the preview.
 	const blockProps = useBlockProps( { className: 'latest-band not-prose' } );
-	const innerBlocksProps = useInnerBlocksProps(
-		{ className: 'latest-band__thought-content' },
-		{ template: TEMPLATE }
-	);
 
 	return (
 		<>
 			<InspectorControls>
+				<PanelBody
+					title={ __( 'Thought of the Month', 'aniacieske-2026' ) }
+				>
+					<MediaUploadCheck>
+						<MediaUpload
+							allowedTypes={ [ 'image' ] }
+							value={ thoughtImageId }
+							onSelect={ ( media ) =>
+								setAttributes( { thoughtImageId: media.id } )
+							}
+							render={ ( { open } ) => (
+								<div style={ { marginBottom: '16px' } }>
+									{ thoughtImage?.source_url && (
+										<img
+											src={ thoughtImage.source_url }
+											alt=""
+											style={ {
+												display: 'block',
+												width: '100%',
+												marginBottom: '8px',
+											} }
+										/>
+									) }
+									<Button
+										variant="secondary"
+										onClick={ open }
+										__next40pxDefaultSize
+									>
+										{ thoughtImageId
+											? __(
+													'Replace photo',
+													'aniacieske-2026'
+											  )
+											: __(
+													'Choose photo',
+													'aniacieske-2026'
+											  ) }
+									</Button>
+									{ !! thoughtImageId && (
+										<Button
+											variant="link"
+											isDestructive
+											style={ { marginLeft: '12px' } }
+											onClick={ () =>
+												setAttributes( {
+													thoughtImageId: 0,
+												} )
+											}
+										>
+											{ __(
+												'Remove photo',
+												'aniacieske-2026'
+											) }
+										</Button>
+									) }
+								</div>
+							) }
+						/>
+					</MediaUploadCheck>
+					<TextareaControl
+						label={ __( 'Thought', 'aniacieske-2026' ) }
+						value={ thoughtText }
+						rows={ 5 }
+						onChange={ ( value ) =>
+							setAttributes( { thoughtText: value } )
+						}
+						__nextHasNoMarginBottom
+					/>
+					<PostPicker
+						postId={ thoughtPostId }
+						onChange={ ( value ) =>
+							setAttributes( { thoughtPostId: value } )
+						}
+					/>
+				</PanelBody>
+
 				<PanelBody title={ __( 'Headings', 'aniacieske-2026' ) }>
 					<TextControl
 						label={ __( 'Thought heading', 'aniacieske-2026' ) }
@@ -233,6 +418,28 @@ export default function Edit( { attributes, setAttributes } ) {
 						value={ categoriesTitle }
 						onChange={ ( value ) =>
 							setAttributes( { categoriesTitle: value } )
+						}
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+					/>
+					<TextControl
+						label={ __( 'Free column label', 'aniacieske-2026' ) }
+						value={ freeLabel }
+						onChange={ ( value ) =>
+							setAttributes( { freeLabel: value } )
+						}
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+					/>
+					<TextControl
+						label={ __( 'Paid column label', 'aniacieske-2026' ) }
+						help={ __(
+							'Categories checked in a membership level’s Content Settings are listed here automatically.',
+							'aniacieske-2026'
+						) }
+						value={ paidLabel }
+						onChange={ ( value ) =>
+							setAttributes( { paidLabel: value } )
 						}
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
@@ -338,7 +545,49 @@ export default function Edit( { attributes, setAttributes } ) {
 						<h2 className="latest-band__heading">
 							{ thoughtTitle }
 						</h2>
-						<div { ...innerBlocksProps } />
+						{ hasThought && (
+							<div
+								className={ `latest-band__thought-fields${
+									thoughtImage?.source_url
+										? ' latest-band__thought-fields--has-image'
+										: ''
+								}` }
+							>
+								{ thoughtImage?.source_url && (
+									<img
+										className="latest-band__thought-image"
+										src={ thoughtImage.source_url }
+										alt={ thoughtImage.alt_text || '' }
+									/>
+								) }
+								<div className="latest-band__thought-body">
+									{ thoughtText && (
+										<p className="latest-band__thought-text">
+											{ thoughtText }
+										</p>
+									) }
+									{ !! thoughtPostId && (
+										<span className="latest-band__thought-link">
+											{ __(
+												'Continue reading',
+												'aniacieske-2026'
+											) }
+										</span>
+									) }
+								</div>
+							</div>
+						) }
+						{ ! hasThought && hasLegacyThought && (
+							<LegacyThought />
+						) }
+						{ ! hasThought && ! hasLegacyThought && (
+							<p className="latest-band__thought-text">
+								{ __(
+									'Add this month’s thought from the block settings.',
+									'aniacieske-2026'
+								) }
+							</p>
+						) }
 					</div>
 
 					<div className="latest-band__latest">
@@ -388,18 +637,38 @@ export default function Edit( { attributes, setAttributes } ) {
 									{ categoriesTitle }
 								</h2>
 							) }
-							<ul className="latest-band__category-list">
-								{ shownCategories.map( ( category ) => (
-									<li
-										key={ category.id }
-										className="latest-band__category"
+							<div
+								className={ `latest-band__category-groups${
+									isSplit
+										? ' latest-band__category-groups--split'
+										: ''
+								}` }
+							>
+								{ categoryGroups.map( ( group ) => (
+									<div
+										key={ group.key }
+										className="latest-band__category-group"
 									>
-										<span className="latest-band__category-link">
-											{ category.name }
-										</span>
-									</li>
+										{ group.label && (
+											<h3 className="latest-band__category-label">
+												{ group.label }
+											</h3>
+										) }
+										<ul className="latest-band__category-list">
+											{ group.items.map( ( category ) => (
+												<li
+													key={ category.id }
+													className="latest-band__category"
+												>
+													<span className="latest-band__category-link">
+														{ category.name }
+													</span>
+												</li>
+											) ) }
+										</ul>
+									</div>
 								) ) }
-							</ul>
+							</div>
 						</nav>
 					) }
 

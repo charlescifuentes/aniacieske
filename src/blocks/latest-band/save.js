@@ -1,8 +1,8 @@
 /**
- * Serializes the thought column's inner blocks into post content.
+ * Preserves a thought still stored as inner blocks.
  *
- * The band wrapper, the ruled headings and the Latest column are produced by
- * `render.php`, so only the editable inner content is stored here.
+ * Everything else is an attribute rendered by `render.php`, so a block using
+ * the sidebar fields saves nothing here.
  */
 
 import { InnerBlocks } from '@wordpress/block-editor';

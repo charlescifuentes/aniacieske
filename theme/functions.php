@@ -373,6 +373,11 @@ require get_template_directory() . '/inc/aniacieske-tags.php';
 require get_template_directory() . '/inc/woocommerce.php';
 
 /**
+ * Paid Memberships Pro integration.
+ */
+require get_template_directory() . '/inc/membership.php';
+
+/**
  * Functions which enhance the theme by hooking into WordPress.
  */
 require get_template_directory() . '/inc/template-functions.php';

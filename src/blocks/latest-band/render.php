@@ -7,7 +7,7 @@
  * full-width row beneath — the layout of the Futbol Papa homepage band.
  *
  * @var array    $attributes Block attributes.
- * @var string   $content    InnerBlocks HTML for the thought column.
+ * @var string   $content    A thought stored as inner blocks, before the fields.
  * @var WP_Block $block      Block instance.
  *
  * @package Aniacieske_2026
@@ -17,6 +17,23 @@ $aniacieske_thought_title = isset( $attributes['thoughtTitle'] ) ? $attributes['
 $aniacieske_latest_title  = isset( $attributes['latestTitle'] ) ? $attributes['latestTitle'] : '';
 $aniacieske_accred_title  = isset( $attributes['accreditationsTitle'] ) ? $attributes['accreditationsTitle'] : '';
 $aniacieske_cat_title     = isset( $attributes['categoriesTitle'] ) ? $attributes['categoriesTitle'] : '';
+
+/*
+ * The thought, from the sidebar fields. `$content` is the fallback for a band
+ * saved before the fields existed, so it keeps its thought until next edited.
+ */
+$aniacieske_thought_text  = isset( $attributes['thoughtText'] ) ? trim( $attributes['thoughtText'] ) : '';
+$aniacieske_thought_image = ! empty( $attributes['thoughtImageId'] )
+	? wp_get_attachment_image( absint( $attributes['thoughtImageId'] ), 'medium_large', false, array( 'class' => 'latest-band__thought-image' ) )
+	: '';
+$aniacieske_thought_post  = ! empty( $attributes['thoughtPostId'] ) ? get_post( absint( $attributes['thoughtPostId'] ) ) : null;
+
+// Unpublishing the post drops the link instead of sending visitors to a 404.
+if ( $aniacieske_thought_post && 'publish' !== $aniacieske_thought_post->post_status ) {
+	$aniacieske_thought_post = null;
+}
+
+$aniacieske_has_thought = '' !== $aniacieske_thought_text || '' !== $aniacieske_thought_image || $aniacieske_thought_post;
 
 /*
  * Categories the client checked, in the order they checked them. With none
@@ -47,6 +64,40 @@ $aniacieske_categories = get_terms(
 if ( is_wp_error( $aniacieske_categories ) ) {
 	$aniacieske_categories = array();
 }
+
+/*
+ * Split into free and paid, keeping the client's order within each. When no
+ * listed category is paid there is nothing to differentiate, so the list stays
+ * a single unlabelled group.
+ */
+$aniacieske_paid_ids  = aniacieske_paid_category_ids();
+$aniacieske_free_cats = array();
+$aniacieske_paid_cats = array();
+
+foreach ( $aniacieske_categories as $aniacieske_category ) {
+	if ( in_array( (int) $aniacieske_category->term_id, $aniacieske_paid_ids, true ) ) {
+		$aniacieske_paid_cats[] = $aniacieske_category;
+	} else {
+		$aniacieske_free_cats[] = $aniacieske_category;
+	}
+}
+
+$aniacieske_is_split   = ! empty( $aniacieske_paid_cats );
+$aniacieske_cat_groups = array_filter(
+	array(
+		array(
+			'label' => $aniacieske_is_split && isset( $attributes['freeLabel'] ) ? $attributes['freeLabel'] : '',
+			'terms' => $aniacieske_free_cats,
+		),
+		array(
+			'label' => isset( $attributes['paidLabel'] ) ? $attributes['paidLabel'] : '',
+			'terms' => $aniacieske_paid_cats,
+		),
+	),
+	static function ( $group ) {
+		return ! empty( $group['terms'] );
+	}
+);
 
 // Chosen by the client from the media library, so the row is theirs to curate
 // and travels with the content between environments.
@@ -89,7 +140,26 @@ $aniacieske_wrapper = get_block_wrapper_attributes( array( 'class' => 'latest-ba
 				<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_thought_title ); ?></h2>
 			<?php endif; ?>
 
-			<?php if ( '' !== trim( (string) $content ) ) : ?>
+			<?php if ( $aniacieske_has_thought ) : ?>
+				<div class="latest-band__thought-fields<?php echo '' !== $aniacieske_thought_image ? ' latest-band__thought-fields--has-image' : ''; ?>">
+					<?php echo $aniacieske_thought_image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+					<?php if ( '' !== $aniacieske_thought_text || $aniacieske_thought_post ) : ?>
+						<div class="latest-band__thought-body">
+							<?php if ( '' !== $aniacieske_thought_text ) : ?>
+								<p class="latest-band__thought-text"><?php echo esc_html( $aniacieske_thought_text ); ?></p>
+							<?php endif; ?>
+
+							<?php if ( $aniacieske_thought_post ) : ?>
+								<a class="latest-band__thought-link" href="<?php echo esc_url( get_permalink( $aniacieske_thought_post ) ); ?>">
+									<?php esc_html_e( 'Continue reading', 'aniacieske-2026' ); ?>
+									<span class="sr-only"><?php echo esc_html( get_the_title( $aniacieske_thought_post ) ); ?></span>
+								</a>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
+				</div>
+			<?php elseif ( '' !== trim( (string) $content ) ) : ?>
 				<div class="latest-band__thought-content">
 					<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
@@ -137,15 +207,25 @@ $aniacieske_wrapper = get_block_wrapper_attributes( array( 'class' => 'latest-ba
 					<h2 class="latest-band__heading"><?php echo esc_html( $aniacieske_cat_title ); ?></h2>
 				<?php endif; ?>
 
-				<ul class="latest-band__category-list">
-					<?php foreach ( $aniacieske_categories as $aniacieske_category ) : ?>
-						<li class="latest-band__category">
-							<a class="latest-band__category-link" href="<?php echo esc_url( get_term_link( $aniacieske_category ) ); ?>">
-								<?php echo esc_html( $aniacieske_category->name ); ?>
-							</a>
-						</li>
+				<div class="latest-band__category-groups<?php echo $aniacieske_is_split ? ' latest-band__category-groups--split' : ''; ?>">
+					<?php foreach ( $aniacieske_cat_groups as $aniacieske_cat_group ) : ?>
+						<div class="latest-band__category-group">
+							<?php if ( '' !== $aniacieske_cat_group['label'] ) : ?>
+								<h3 class="latest-band__category-label"><?php echo esc_html( $aniacieske_cat_group['label'] ); ?></h3>
+							<?php endif; ?>
+
+							<ul class="latest-band__category-list">
+								<?php foreach ( $aniacieske_cat_group['terms'] as $aniacieske_category ) : ?>
+									<li class="latest-band__category">
+										<a class="latest-band__category-link" href="<?php echo esc_url( get_term_link( $aniacieske_category ) ); ?>">
+											<?php echo esc_html( $aniacieske_category->name ); ?>
+										</a>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
 					<?php endforeach; ?>
-				</ul>
+				</div>
 			</nav>
 		<?php endif; ?>
 
