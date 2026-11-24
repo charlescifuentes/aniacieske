@@ -8,6 +8,9 @@
  */
 
 get_header();
+
+// Only needed when there is nothing to list.
+$aniacieske_no_access = have_posts() ? '' : aniacieske_category_no_access_message();
 ?>
 
 	<section id="primary">
@@ -31,6 +34,18 @@ get_header();
 			// Previous/next page navigation.
 			aniacieske_the_posts_navigation();
 
+		elseif ( '' !== $aniacieske_no_access ) :
+			?>
+
+			<header class="page-header">
+				<?php the_archive_title( '<h1 class="page-title">', '</h1>' ); ?>
+			</header><!-- .page-header -->
+
+			<div <?php aniacieske_content_class( 'page-content' ); ?>>
+				<?php echo $aniacieske_no_access; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built and escaped by PMPro. ?>
+			</div><!-- .page-content -->
+
+			<?php
 		else :
 
 			// If no content, include the "No posts found" template.

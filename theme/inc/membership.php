@@ -58,6 +58,39 @@ function aniacieske_register_category_paid_field() {
 }
 add_action( 'rest_api_init', 'aniacieske_register_category_paid_field' );
 
+if ( ! function_exists( 'aniacieske_category_no_access_message' ) ) :
+	/**
+	 * PMPro's message box for the current category archive.
+	 *
+	 * PMPro attaches its box to posts, so a paid category with nothing to list
+	 * would otherwise fall through to "Nothing Found" without mentioning that
+	 * a subscription exists.
+	 *
+	 * @return string Message HTML; empty when the category is free or the
+	 *                visitor already has one of its levels.
+	 */
+	function aniacieske_category_no_access_message() {
+		if ( ! is_category() || ! function_exists( 'pmpro_hasMembershipLevel' ) || ! function_exists( 'pmpro_get_no_access_message' ) ) {
+			return '';
+		}
+
+		$term_id   = get_queried_object_id();
+		$level_ids = array();
+
+		foreach ( (array) pmpro_getAllLevels( true ) as $level ) {
+			if ( in_array( $term_id, array_map( 'intval', pmpro_getMembershipCategories( $level->id ) ), true ) ) {
+				$level_ids[] = (int) $level->id;
+			}
+		}
+
+		if ( empty( $level_ids ) || pmpro_hasMembershipLevel( $level_ids ) ) {
+			return '';
+		}
+
+		return pmpro_get_no_access_message( '', $level_ids );
+	}
+endif;
+
 /**
  * Heading of PMPro's message box on restricted content.
  *
