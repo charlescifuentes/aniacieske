@@ -14,7 +14,14 @@ if (slug) {
 
 	// Create the zip and add the theme directory under the slug name.
 	const zip = new AdmZip();
-	zip.addLocalFolder(themeDir, slug);
+	// SiteGround Optimizer writes a .min.css copy next to style.css on any site
+	// running it. Shipping the local copy can serve live an outdated build, and
+	// the live site generates its own.
+	zip.addLocalFolder(
+		themeDir,
+		slug,
+		(filename) => !filename.endsWith('.min.css')
+	);
 
 	// Update the version string in functions.php before writing.
 	const entry = zip.getEntry(`${slug}/functions.php`);
